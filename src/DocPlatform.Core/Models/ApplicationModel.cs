@@ -14,6 +14,9 @@ public class ApplicationModel
 
     // Aggregated across all repos (deduplicated) — convenient for the AI prompt.
     public List<string> Technologies { get; set; } = new();
+
+    // Categorized capabilities (auth, storage, messaging, cloud, …) detected from packages.
+    public List<DetectedCapability> Capabilities { get; set; } = new();
 }
 
 public class RepositoryModel

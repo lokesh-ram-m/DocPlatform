@@ -45,13 +45,14 @@ public class DocumentationOrchestrator
             log($"  found {repo.Projects.Count} project(s)");
         }
         application.Technologies = TechnologyAggregator.From(application);
+        application.Capabilities = CapabilityClassifier.Classify(application);
 
         // 4. AI: explain the metadata as Markdown.
         log("Generating documentation with the AI provider ...");
         DocumentationResult docs = await _aiProvider.GenerateDocumentationAsync(application, cancellationToken);
 
         // 5. Write Markdown into the Docusaurus docs folder.
-        log($"Writing {docs.Files.Count} document(s) to {outputDirectory}");
+        log($"Writing {docs.Documents.Count} document(s) to {outputDirectory}");
         _writer.Write(docs, outputDirectory);
 
         return application;

@@ -39,10 +39,16 @@ public class GitHubModelsProvider : IAIProvider
         var result = new DocumentationResult();
         string metadataJson = JsonSerializer.Serialize(application, JsonOptions);
 
-        foreach ((string fileName, string userPrompt) in DocumentationPrompts.MandatoryDocs(application.Name, metadataJson))
+        foreach (DocSpec spec in DocumentationPrompts.Plan(application.Name, metadataJson))
         {
-            string markdown = await CompleteAsync(DocumentationPrompts.System, userPrompt, cancellationToken);
-            result.Add(fileName, markdown);
+            string markdown = await CompleteAsync(DocumentationPrompts.System, spec.Instructions, cancellationToken);
+            result.Add(new GeneratedDocument
+            {
+                Group = spec.Group,
+                FileName = spec.FileName,
+                Markdown = markdown,
+                Order = spec.Order
+            });
         }
 
         return result;
