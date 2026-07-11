@@ -10,9 +10,11 @@ public class GeneratedDocument
     public int Order { get; set; }                         // position within the group
 }
 
-// The full set of generated documents.
+// The full set of generated documents for one application.
 public class DocumentationResult
 {
+    public string ApplicationName { get; set; } = string.Empty;
+
     public List<GeneratedDocument> Documents { get; } = new();
 
     public void Add(GeneratedDocument document) => Documents.Add(document);

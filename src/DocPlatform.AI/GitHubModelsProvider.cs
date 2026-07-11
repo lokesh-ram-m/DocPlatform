@@ -36,7 +36,7 @@ public class GitHubModelsProvider : IAIProvider
         ApplicationModel application,
         CancellationToken cancellationToken = default)
     {
-        var result = new DocumentationResult();
+        var result = new DocumentationResult { ApplicationName = application.Name };
         string metadataJson = JsonSerializer.Serialize(application, JsonOptions);
 
         foreach (DocSpec spec in DocumentationPrompts.Plan(application.Name, metadataJson))
