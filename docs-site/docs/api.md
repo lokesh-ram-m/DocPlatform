@@ -4,50 +4,52 @@ sidebar_position: 3
 
 # HTTP API Documentation
 
-## ProjectController
-**Base Route**: `api/projects`
+## TaskManagementApi
 
-| Method | Action         | Endpoint             |
-|--------|----------------|----------------------|
-| GET    | GetAll        | /api/projects        |
-| GET    | GetById       | /api/projects/{id}   |
-| GET    | GetByUserId   | /api/projects/user/{userId} |
-| POST   | Add           | /api/projects        |
-| PUT    | Update        | /api/projects/{id}   |
-| DELETE | Delete        | /api/projects/{id}   |
+### ProjectController
+**Base Route:** `api/projects`
 
-## UserController
-**Base Route**: `api/users`
+| Method | Action          | Endpoint               |
+|--------|-----------------|------------------------|
+| GET    | GetAll         | `/api/projects`        |
+| GET    | GetById        | `/api/projects/{id}`   |
+| GET    | GetByUserId    | `/api/projects/user/{userId}` |
+| POST   | Add            | `/api/projects`        |
+| PUT    | Update         | `/api/projects/{id}`   |
+| DELETE | Delete         | `/api/projects/{id}`   |
 
-| Method | Action         | Endpoint             |
-|--------|----------------|----------------------|
-| GET    | GetAll        | /api/users           |
-| GET    | GetById       | /api/users/{id}      |
-| PUT    | Update        | /api/users/{id}      |
-| DELETE | Deactivate     | /api/users/{id}      |
+### UserController
+**Base Route:** `api/users`
 
-## AuthController
-**Base Route**: `api/auth`
+| Method | Action          | Endpoint               |
+|--------|-----------------|------------------------|
+| GET    | GetAll         | `/api/users`           |
+| GET    | GetById        | `/api/users/{id}`      |
+| PUT    | Update         | `/api/users/{id}`      |
+| DELETE | Deactivate      | `/api/users/{id}`      |
 
-| Method | Action         | Endpoint             |
-|--------|----------------|----------------------|
-| POST   | Login          | /api/auth/login      |
-| POST   | Register       | /api/auth/register   |
+### AuthController
+**Base Route:** `api/auth`
 
-## AgentController
-**Base Route**: `api/agent`
+| Method | Action          | Endpoint               |
+|--------|-----------------|------------------------|
+| POST   | Login          | `/api/auth/login`      |
+| POST   | Register       | `/api/auth/register`   |
 
-| Method | Action         | Endpoint             |
-|--------|----------------|----------------------|
-| POST   | Chat           | /api/agent/chat      |
+### AgentController
+**Base Route:** `api/agent`
 
-## TaskController
-**Base Route**: `api/tasks`
+| Method | Action          | Endpoint               |
+|--------|-----------------|------------------------|
+| POST   | Chat           | `/api/agent/chat`      |
 
-| Method | Action         | Endpoint             |
-|--------|----------------|----------------------|
-| GET    | GetAll        | /api/tasks           |
-| GET    | GetById       | /api/tasks/{id}      |
-| POST   | Add           | /api/tasks           |
-| PUT    | Update        | /api/tasks/{id}      |
-| DELETE | Delete        | /api/tasks/{id}      |
+### TaskController
+**Base Route:** `api/tasks`
+
+| Method | Action          | Endpoint               |
+|--------|-----------------|------------------------|
+| GET    | GetAll         | `/api/tasks`           |
+| GET    | GetById        | `/api/tasks/{id}`      |
+| POST   | Add            | `/api/tasks`           |
+| PUT    | Update         | `/api/tasks/{id}`      |
+| DELETE | Delete         | `/api/tasks/{id}`      |

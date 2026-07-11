@@ -5,15 +5,21 @@ slug: /
 
 # TaskFlow
 
-## Summary 
-TaskFlow is a comprehensive task management application designed to facilitate project organization and user collaboration. It features a backend API built with .NET and an Angular-based frontend, enabling functionality such as user authentication, project tracking, and task management.
+## Summary
+TaskFlow is an application designed for efficient task management, allowing users to create, update, and organize tasks and projects. It features user authentication, project collaboration, and AI-powered task assistance.
 
 ## Repositories
-- **TaskManagementBackend**: Contains the .NET API for task management, handling user, project, and task operations.
-- **TaskManagementFrontend**: Hosts the Angular-based UI for interacting with the task management API.
+- **TaskManagementBackend**: Backend API for managing tasks and user authentication.
+- **TaskManagementFrontend**: Frontend interface built with Angular for user interaction with the task management system.
 
 ## Technology Stack
-- **Backend**: .NET (net9.0), ASP.NET Core, Dapper, JWT Authentication, OpenAPI / Swagger
-- **Frontend**: Angular
-- **Database**: SQL Server
-- **AI Integration**: Semantic Kernel (AI)
+- **Backend**: 
+  - .NET (net9.0)
+  - ASP.NET Core
+  - Dapper
+  - JWT Authentication
+  - OpenAPI / Swagger
+  - Semantic Kernel (AI)
+  - SQL Server
+- **Frontend**: 
+  - Angular

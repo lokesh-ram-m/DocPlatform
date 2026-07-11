@@ -5,42 +5,35 @@ sidebar_position: 2
 # Architecture
 
 ## Detected Patterns
-The architecture of the application likely follows several design patterns, including:
-- **Layered Pattern**: The presence of services and interfaces suggests a separation between business logic and data access.
-- **Dependency Injection (DI)**: The use of interfaces for services indicates that dependency injection may be employed to manage dependencies.
-- **Repository Pattern**: The existence of repository interfaces such as `IProjectRepository`, `ITaskRepository`, and `IUserRepository` suggests a possible implementation of the repository pattern for data access abstraction.
+The architecture of the TaskFlow application likely follows several established patterns based on the metadata. There is evidence of the **Repository Pattern**, indicated by the presence of various interfaces such as `IProjectRepository`, `ITaskRepository`, and `IUserRepository`. Additionally, the presence of service interfaces (`IAuthService`, `IProjectService`, etc.) suggests a **Service Layer** pattern. The application appears to be structured in a **Layered Architecture**, based on the organization of controllers and services. Dependency Injection (DI) is also inferred through the design of interfaces and services, which is common in **Clean Architecture**.
 
 ## Backend Components
-The backend of the application is structured around a .NET project titled **TaskManagementApi**, indicating it is built using ASP.NET Core targeting .NET 9.0. Its primary responsibilities include:
-- **Authentication**: Managed through `AuthController`, allowing user login and registration.
-- **Task Management**: Handled via `TaskController`, providing endpoints for CRUD operations on tasks.
-- **User Management**: Facilitated by `UserController`, managing user data and deactivations.
-- **Project Management**: Managed by `ProjectController`, allowing for project-related operations.
-- **AI Interaction**: The `AgentController` suggests capabilities for chat-based interactions, potentially using the Semantic Kernel for AI.
+The backend is structured as a .NET API with the following main components:
 
-Key services within the application include:
-- `AuthService`
-- `UserService`
-- `ProjectService`
-- `TaskService`
-- `TaskAgentService`
+- **TaskManagementApi**:
+  - **Responsibilities**: This project handles the core API functionalities, including authentication, user management, project management, and task management.
+  - **Controllers**:
+    - `ProjectController`: Manages project CRUD operations.
+    - `UserController`: Handles user-related actions.
+    - `AuthController`: Manages user login and registration.
+    - `AgentController`: Facilitates interaction with an agent (chat capabilities).
+    - `TaskController`: Manages task-related operations.
+  - **Services**: 
+    - `AuthService`, `ProjectService`, `TaskService`, and `UserService`, which correspond to the controllers and are likely responsible for handling business logic and data interactions.
 
 ## Frontend
-The frontend component is developed using Angular and is organized into various components and routes:
+The frontend is developed as an Angular application, consisting of the following components and routing structure:
+
 - **Components**:
-  - `assistant`
-  - `login`
-  - `navbar`
-  - `project-list`
-  - `register`
-  - `task-list`
-
+  - `assistant`: Likely a component for assisting users in task or project management.
+  - `login`: Used for user authentication.
+  - `navbar`: A navigation bar for the application.
+  - `project-list`: Displays a list of projects.
+  - `register`: Handles user registration.
+  - `task-list`: Displays a list of tasks.
+  
 - **Routes**:
-  - Root (`(root)`)
-  - Wildcard route (`**`)
-  - Specific routes for `assistant`, `login`, `projects`, `register`, and `tasks`
-
-These components and routes suggest a user interface designed for managing tasks and projects, as well as user interactions.
+  - Defined routes include home (`(root)`), a wildcard for unmatched routes (`**`), and specific paths for each major component such as `assistant`, `login`, `projects`, `register`, and `tasks`.
 
 ## Data & Persistence
-From the metadata, there is no explicit indication of `DbContext` classes; however, the presence of data packages such as **Dapper** and **Microsoft.Data.SqlClient** implies a potential use of direct SQL access methods or ORM functionalities for data manipulation. The application likely interacts with a SQL Server database, considering this metadata. The repository interfaces hint at managing entity instances such as `Project`, `Task`, and `User`, which reflects typical CRUD operations in a persistent storage context.
+Data persistence strategies suggest the use of **Dapper**, as indicated by the package references. However, there are no DbContexts explicitly defined in the provided metadata, which may imply the application leverages Dapper for direct SQL interactions instead of Entity Framework Core for ORM capabilities. The backend is designed to interact with SQL Server, as inferred from the package reference to `Microsoft.Data.SqlClient`.

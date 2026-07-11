@@ -32,9 +32,15 @@ if (string.IsNullOrWhiteSpace(token))
 }
 
 // --- Dependency Injection (composition root) ---
+// Choose the extraction engine from config: "Roslyn" (accurate) or "Heuristic" (fast regex).
+string engine = config["Extraction:Engine"] ?? "Roslyn";
+
 var services = new ServiceCollection();
 services.AddSingleton<IRepositoryScanner, RepositoryScanner>();
-services.AddSingleton<IMetadataExtractor, MetadataExtractor>();
+services.AddSingleton<IMetadataExtractor>(_ =>
+    engine.Equals("Heuristic", StringComparison.OrdinalIgnoreCase)
+        ? new HeuristicMetadataExtractor()
+        : new RoslynMetadataExtractor());
 services.AddSingleton<IMarkdownWriter, MarkdownWriter>();
 services.AddSingleton<IAIProvider>(_ => new GitHubModelsProvider(endpoint, model, token));
 services.AddSingleton<DocumentationOrchestrator>();
@@ -75,7 +81,7 @@ string repoRoot = FindRepoRoot() ?? Directory.GetCurrentDirectory();
 string outputDir = Path.Combine(repoRoot, config["Output:DocsFolder"] ?? "docs-site/docs");
 
 // 4. Analyze
-Console.WriteLine($"\n▶ Analyzing '{appName}' ({repoPaths.Count} repositories)...\n");
+Console.WriteLine($"\n▶ Analyzing '{appName}' ({repoPaths.Count} repositories) — using the {engine} extractor...\n");
 ApplicationModel app = await orchestrator.GenerateAsync(
     appName, repoPaths, outputDir, log: msg => Console.WriteLine("  " + msg));
 
