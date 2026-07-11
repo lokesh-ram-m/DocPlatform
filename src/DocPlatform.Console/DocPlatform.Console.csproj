@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\DocPlatform.Core\DocPlatform.Core.csproj" />
+    <ProjectReference Include="..\DocPlatform.Application\DocPlatform.Application.csproj" />
+    <ProjectReference Include="..\DocPlatform.Infrastructure\DocPlatform.Infrastructure.csproj" />
+    <ProjectReference Include="..\DocPlatform.AI\DocPlatform.AI.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

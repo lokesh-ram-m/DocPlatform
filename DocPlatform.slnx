@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DocPlatform.AI/DocPlatform.AI.csproj" />
+    <Project Path="src/DocPlatform.Application/DocPlatform.Application.csproj" />
+    <Project Path="src/DocPlatform.Console/DocPlatform.Console.csproj" />
+    <Project Path="src/DocPlatform.Core/DocPlatform.Core.csproj" />
+    <Project Path="src/DocPlatform.Infrastructure/DocPlatform.Infrastructure.csproj" />
+  </Folder>
+</Solution>
