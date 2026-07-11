@@ -41,17 +41,40 @@ internal static class ExtractionHelpers
             if (name.EndsWith(".component.ts", StringComparison.OrdinalIgnoreCase))
                 project.Angular.Components.Add(name.Replace(".component.ts", "", StringComparison.OrdinalIgnoreCase));
 
-            if (name.Contains("routes", StringComparison.OrdinalIgnoreCase) && name.EndsWith(".ts"))
-            {
-                string code;
-                try { code = File.ReadAllText(file); } catch { continue; }
-                foreach (Match m in Regex.Matches(code, @"path:\s*['""]([^'""]*)['""]"))
-                    project.Angular.Routes.Add(string.IsNullOrEmpty(m.Groups[1].Value) ? "(root)" : m.Groups[1].Value);
-            }
+            if (!name.EndsWith(".ts", StringComparison.OrdinalIgnoreCase) ||
+                name.EndsWith(".spec.ts", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            string code;
+            try { code = File.ReadAllText(file); } catch { continue; }
+
+            // A route source = filename hints OR any Angular routing construct in the file.
+            bool routeSource =
+                name.Contains("routes", StringComparison.OrdinalIgnoreCase) ||
+                name.Contains("routing", StringComparison.OrdinalIgnoreCase) ||
+                code.Contains("RouterModule") ||
+                code.Contains("provideRouter") ||
+                Regex.IsMatch(code, @":\s*Routes\b");
+            if (!routeSource) continue;
+
+            foreach (Match m in Regex.Matches(code, @"path:\s*['""]([^'""]*)['""]"))
+                project.Angular.Routes.Add(string.IsNullOrEmpty(m.Groups[1].Value) ? "(root)" : m.Groups[1].Value);
         }
 
         Dedupe(project.Angular.Components);
         Dedupe(project.Angular.Routes);
+    }
+
+    // Entity precision: filter out DTOs, responses, base classes, etc. so only
+    // real domain entities land in the model.
+    private static readonly string[] NonEntitySuffixes =
+        { "Dto", "Response", "Request", "Result", "ViewModel", "Vm", "Mapping",
+          "Options", "Settings", "Configuration", "Command", "Query", "Handler", "Validator" };
+
+    public static bool IsLikelyEntity(string name)
+    {
+        if (string.Equals(name, "BaseEntity", StringComparison.OrdinalIgnoreCase)) return false;
+        return !NonEntitySuffixes.Any(s => name.EndsWith(s, StringComparison.Ordinal));
     }
 
     public static void Dedupe(List<string> list)

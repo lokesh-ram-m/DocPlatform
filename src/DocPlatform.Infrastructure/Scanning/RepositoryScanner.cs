@@ -26,7 +26,7 @@ public class RepositoryScanner : IRepositoryScanner
 
         // ---- .NET projects (.csproj) ----
         foreach (string csproj in EnumerateFiles(repositoryPath).Where(f => f.EndsWith(".csproj")))
-            repo.Projects.Add(ParseDotNetProject(csproj));
+            repo.Projects.Add(ParseDotNetProject(csproj, repositoryPath));
 
         // ---- Angular projects (package.json that depends on @angular/core) ----
         foreach (string pkg in EnumerateFiles(repositoryPath)
@@ -40,7 +40,7 @@ public class RepositoryScanner : IRepositoryScanner
     }
 
     // -- .NET -----------------------------------------------------------------
-    private static ProjectModel ParseDotNetProject(string csprojPath)
+    private static ProjectModel ParseDotNetProject(string csprojPath, string repositoryRoot)
     {
         var project = new ProjectModel
         {
@@ -54,7 +54,10 @@ public class RepositoryScanner : IRepositoryScanner
             string sdk = doc.Root?.Attribute("Sdk")?.Value ?? string.Empty;
             string? outputType = doc.Descendants("OutputType").FirstOrDefault()?.Value;
 
-            project.TargetFramework = doc.Descendants("TargetFramework").FirstOrDefault()?.Value;
+            project.TargetFramework = doc.Descendants("TargetFramework").FirstOrDefault()?.Value
+                ?? doc.Descendants("TargetFrameworks").FirstOrDefault()?.Value
+                // Fall back to a central Directory.Build.props (common in real repos).
+                ?? FindTfmInBuildProps(Path.GetDirectoryName(csprojPath)!, repositoryRoot);
 
             project.PackageReferences = doc.Descendants("PackageReference")
                 .Select(e => e.Attribute("Include")?.Value)
@@ -126,6 +129,31 @@ public class RepositoryScanner : IRepositoryScanner
             : new List<string>();
 
     // -- File walking (skips bin/obj/node_modules/.git) -----------------------
+    // Walks up from the project folder (bounded by the repo root) looking for a
+    // Directory.Build.props that centrally defines the TargetFramework.
+    private static string? FindTfmInBuildProps(string startDir, string repositoryRoot)
+    {
+        string root = Path.GetFullPath(repositoryRoot);
+        var dir = new DirectoryInfo(Path.GetFullPath(startDir));
+        while (dir is not null && dir.FullName.StartsWith(root, StringComparison.OrdinalIgnoreCase))
+        {
+            string props = Path.Combine(dir.FullName, "Directory.Build.props");
+            if (File.Exists(props))
+            {
+                try
+                {
+                    XDocument d = XDocument.Load(props);
+                    string? tfm = d.Descendants("TargetFramework").FirstOrDefault()?.Value
+                               ?? d.Descendants("TargetFrameworks").FirstOrDefault()?.Value;
+                    if (!string.IsNullOrWhiteSpace(tfm)) return tfm;
+                }
+                catch { /* ignore malformed props */ }
+            }
+            dir = dir.Parent;
+        }
+        return null;
+    }
+
     private static IEnumerable<string> EnumerateFiles(string root)
     {
         var stack = new Stack<string>();

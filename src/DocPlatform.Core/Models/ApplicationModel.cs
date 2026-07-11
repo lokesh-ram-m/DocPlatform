@@ -53,6 +53,7 @@ public class ProjectModel
     public List<string> Interfaces { get; set; } = new();
     public List<string> Entities { get; set; } = new();
     public List<string> DbContexts { get; set; } = new();
+    public List<string> CqrsRequests { get; set; } = new();   // MediatR commands/queries
     public bool HasAuthentication { get; set; }
 
     // ---- Angular specifics (null for non-Angular projects) ----

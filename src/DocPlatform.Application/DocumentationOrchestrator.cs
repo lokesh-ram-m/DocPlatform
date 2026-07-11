@@ -25,16 +25,14 @@ public class DocumentationOrchestrator
         _writer = writer;
     }
 
-    public async Task<ApplicationModel> GenerateAsync(
+    // Deterministic only: scan + extract + classify into the ApplicationModel (no AI).
+    public ApplicationModel BuildModel(
         string applicationName,
         IEnumerable<string> repositoryPaths,
-        string outputDirectory,
-        Action<string>? log = null,
-        CancellationToken cancellationToken = default)
+        Action<string>? log = null)
     {
         log ??= _ => { };
 
-        // 1-3. Deterministic: scan + extract into the ApplicationModel.
         var application = new ApplicationModel { Name = applicationName };
         foreach (string path in repositoryPaths)
         {
@@ -46,6 +44,20 @@ public class DocumentationOrchestrator
         }
         application.Technologies = TechnologyAggregator.From(application);
         application.Capabilities = CapabilityClassifier.Classify(application);
+        return application;
+    }
+
+    public async Task<ApplicationModel> GenerateAsync(
+        string applicationName,
+        IEnumerable<string> repositoryPaths,
+        string outputDirectory,
+        Action<string>? log = null,
+        CancellationToken cancellationToken = default)
+    {
+        log ??= _ => { };
+
+        // 1-3. Deterministic: scan + extract + classify.
+        ApplicationModel application = BuildModel(applicationName, repositoryPaths, log);
 
         // 4. AI: explain the metadata as Markdown.
         log("Generating documentation with the AI provider ...");

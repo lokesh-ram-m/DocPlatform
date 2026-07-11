@@ -80,17 +80,44 @@ if (repoPaths.Count == 0)
 string repoRoot = FindRepoRoot() ?? Directory.GetCurrentDirectory();
 string outputDir = Path.Combine(repoRoot, config["Output:DocsFolder"] ?? "docs-site/docs");
 
-// 4. Analyze
-Console.WriteLine($"\n▶ Analyzing '{appName}' ({repoPaths.Count} repositories) — using the {engine} extractor...\n");
-ApplicationModel app = await orchestrator.GenerateAsync(
-    appName, repoPaths, outputDir, log: msg => Console.WriteLine("  " + msg));
+// 4. Analyze  (SCAN_ONLY env var = detection report without calling the AI)
+bool scanOnly = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SCAN_ONLY"));
+Console.WriteLine($"\n▶ Analyzing '{appName}' ({repoPaths.Count} repositories) — {engine} extractor{(scanOnly ? ", SCAN-ONLY" : "")}...\n");
 
-Console.WriteLine("\n✅ Done!");
-Console.WriteLine($"   Repositories : {app.Repositories.Count}");
-Console.WriteLine($"   Projects     : {app.Repositories.Sum(r => r.Projects.Count)}");
-Console.WriteLine($"   Technologies : {string.Join(", ", app.Technologies)}");
-Console.WriteLine($"   Docs written : {outputDir}");
-Console.WriteLine("\nNext: run the Docusaurus site to browse the documentation.");
+ApplicationModel app = scanOnly
+    ? orchestrator.BuildModel(appName, repoPaths, log: msg => Console.WriteLine("  " + msg))
+    : await orchestrator.GenerateAsync(appName, repoPaths, outputDir, log: msg => Console.WriteLine("  " + msg));
+
+PrintReport(app);
+if (!scanOnly)
+{
+    Console.WriteLine($"\n   Docs written : {outputDir}");
+    Console.WriteLine("   Next: run the Docusaurus site to browse the documentation.");
+}
+
+static void PrintReport(ApplicationModel app)
+{
+    Console.WriteLine("\n=== Detection Report ===");
+    foreach (RepositoryModel repo in app.Repositories)
+    {
+        Console.WriteLine($"📦 {repo.Name}");
+        foreach (ProjectModel p in repo.Projects)
+        {
+            Console.WriteLine($"   └─ {p.Kind} : {p.Name} [{p.TargetFramework ?? "-"}]");
+            if (p.Controllers.Count > 0)
+                Console.WriteLine($"        controllers: {p.Controllers.Count} ({p.Controllers.Sum(c => c.Actions.Count)} endpoints)");
+            if (p.Services.Count > 0)   Console.WriteLine($"        services:    {p.Services.Count}");
+            if (p.Entities.Count > 0)   Console.WriteLine($"        entities:    {string.Join(", ", p.Entities.Take(12))}{(p.Entities.Count > 12 ? " …" : "")}");
+            if (p.DbContexts.Count > 0) Console.WriteLine($"        dbcontexts:  {string.Join(", ", p.DbContexts)}");
+            if (p.CqrsRequests.Count > 0) Console.WriteLine($"        cqrs:        {p.CqrsRequests.Count} commands/queries");
+            if (p.Angular is not null)  Console.WriteLine($"        angular:     {p.Angular.Components.Count} components, {p.Angular.Routes.Count} routes");
+        }
+    }
+    Console.WriteLine($"\nTechnologies: {string.Join(", ", app.Technologies)}");
+    Console.WriteLine("Capabilities:");
+    foreach (IGrouping<string, DetectedCapability> g in app.Capabilities.GroupBy(c => c.Category))
+        Console.WriteLine($"   {g.Key}: {string.Join(", ", g.Select(c => c.Name).Distinct())}");
+}
 
 // --- helpers ---
 static string ReadNonEmpty(string fallback)
