@@ -5,13 +5,30 @@ sidebar_position: 3
 # Infrastructure & Cloud
 
 ## Hosting & Runtime
-The application **CleanArchitecture** is built using the ASP.NET Core framework and utilizes Angular for its frontend components. The backend is structured primarily as a set of .NET Class Libraries targeting `.NET 10.0`. The application components are designed to be containerizable, making it suitable for modern deployment practices, including microservices and cloud-based hosting environments.
+The application consists of multiple components that are designed to run in a .NET environment. The key components include:
+
+- **ASP.NET Core Services**: The main web API is implemented using ASP.NET Core, specifically with the `Web` project which handles incoming HTTP requests routed through minimal APIs.
+- **Angular SPA**: The client-side is built as a Single Page Application (SPA) using Angular. The Angular project (`cleanarchitecture.web`) hosts various components and routes for user interaction.
+- **Containerizable**: The application is structured in a way that allows for containerization, facilitating deployment in cloud environments or on-premises.
 
 ## Cloud Services
-The application has detected capabilities to integrate with Azure cloud services through the Azure SDK. This includes various Azure hosting options and database services such as Azure PostgreSQL. However, no specific cloud services have been noted beyond this general integration, and therefore, the application can be considered host-agnostic/containerizable. 
+Detected cloud capabilities include:
+- **Azure SDK**: The application has integrated support for Azure services through `Aspire.Hosting.Azure.AppContainers`. 
+
+No other specific cloud services were detected. The application's architecture appears to be host-agnostic and can run in a variety of environments due to its containerizable nature.
 
 ## Configuration
-Configuration sources include references to environment variables and standard `appsettings` practices, although no specific configuration sources are explicitly detailed within the metadata. The choice of using ASP.NET Core Identity indicates there may be options for managing user authentication and related settings.
+Configuration sources available in the application include:
+- **Environment Variables**: These are likely utilized to manage different app settings across various environments.
+- **appsettings.json**: Not explicitly mentioned in the metadata, but commonly used with .NET applications for configuration management.
+
+There are no specific details on configuration sources beyond indicating the use of standard practices common in .NET applications.
 
 ## Deployment Considerations
-Deployment configurations are not directly specified in the metadata; however, the application leverages standard practices evident in its infrastructure. It uses container-friendly technologies like ASP.NET Core and has libraries for resilience and diagnostics, suggesting that careful attention should be paid to factors such as scaling, network configurations, and service discovery when deploying the application.
+The application likely supports various deployment scenarios considering its modular design and support for containerization. However, details on specific deployment methods (e.g., CI/CD pipelines, Azure App Services deployment specifics) were not found in the metadata.
+
+It can be inferred that:
+- The application can be hosted in Azure or any other compliant environment that supports ASP.NET Core and containers.
+- The deployment may need to involve setting up database connections according to the detected PostgreSQL capabilities.
+
+Additional operational concerns, such as scaling and monitoring, would depend on the specific hosting environment and configurations chosen during deployment.

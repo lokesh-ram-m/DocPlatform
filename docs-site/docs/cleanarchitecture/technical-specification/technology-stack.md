@@ -4,26 +4,25 @@ sidebar_position: 2
 
 # Technology Stack
 
-| Concern                     | Technology                                         | Details                                                                                            |
-|-----------------------------|---------------------------------------------------|----------------------------------------------------------------------------------------------------|
-| Runtime & Frameworks        | .NET (net10.0)                                   | The application targets .NET 10.0.                                                                |
-|                             | ASP.NET Core                                      | Used for building the web API and minimal APIs.                                                    |
-|                             | Angular                                           | The application includes an Angular frontend.                                                     |
-| Data Access                 | Entity Framework Core                             | Core library for data access.                                                                       |
-|                             | Microsoft.EntityFrameworkCore                     | Provides database interaction capabilities.                                                         |
-|                             | Aspire.Microsoft.EntityFrameworkCore.SqlServer   | Integration for SQL Server database access.                                                         |
-|                             | Aspire.Npgsql.EntityFrameworkCore.PostgreSQL    | Integration for PostgreSQL database access.                                                        |
-|                             | Microsoft.EntityFrameworkCore.Sqlite              | Integration for SQLite database access.                                                             |
-| Authentication              | ASP.NET Core Identity                             | Used for implementing authentication features in the application.                                 |
-| API Documentation           | OpenAPI                                           | Implemented via Microsoft.AspNetCore.OpenApi for API documentation.                               |
-|                             | Microsoft.Extensions.ApiDescription.Server       | Used for improving API description and accessibility.                                             |
-| AI/LLM                     | No AI/LLM technologies detected.                  |                                                                                                    |
-| Cross-Cutting Libraries      | AutoMapper                                        | Used for object-to-object mappings throughout the application.                                     |
-|                             | FluentValidation.DependencyInjectionExtensions     | Provides capabilities for model validation.                                                        |
-|                             | Moq                                               | Mock library for unit testing.                                                                      |
-|                             | NUnit                                             | Testing framework used for writing and executing tests.                                            |
-|                             | Microsoft.Extensions.Http.Resilience             | Adds resilience capabilities to HTTP clients.                                                       |
-|                             | Microsoft.Extensions.ServiceDiscovery             | Service discovery capabilities for cloud services.                                                 |
-|                             | OpenTelemetry                                     | Used for tracking and providing insights into application performance                                |
+| Concern                     | Technology                                | Details                                                 |
+|----------------------------|-------------------------------------------|---------------------------------------------------------|
+| Runtime & Frameworks       | .NET (net10.0)                           | The application targets .NET version 10.0.             |
+|                            | ASP.NET Core                             | Framework for building web applications and APIs.       |
+|                            | Angular                                   | Front-end framework used for building client-side applications. |
+| Data Access                | Entity Framework Core                    | ORM used for database operations.                       |
+|                            | Aspire.Npgsql.EntityFrameworkCore.PostgreSQL | Provides PostgreSQL support for EF Core.               |
+|                            | Microsoft.EntityFrameworkCore.Sqlite      | Provides SQLite support for EF Core.                   |
+| Authentication             | ASP.NET Core Identity                    | Framework for managing user identity and authentication.|
+| API Documentation          | OpenAPI                                   | Documentation standard for APIs via Microsoft.AspNetCore.OpenApi. |
+| AI/LLM                    | No AI/LLM technologies detected          |                                                        |
+| Cross-Cutting Libraries     | AutoMapper                                | Used for object-object mapping.                         |
+|                            | FluentValidation.DependencyInjectionExtensions | Used for validation within the application.           |
+|                            | Moq                                       | Mocking library used in unit testing.                  |
+|                            | NUnit                                     | Testing framework utilized for writing tests.          |
+|                            | Microsoft.Extensions.Http.Resilience      | Provides resilience capabilities for HTTP requests.     |
+|                            | OpenTelemetry                              | Used for application observability and performance tracking. |
+|                            | Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore | Provides diagnostics support for EF Core.              |
+| Cloud                      | Azure SDK                                 | Utilized for Azure services integration.                |
+| Database                   | PostgreSQL                                | RDBMS chosen for data persistence with integration through EF Core. |
 
-The technologies listed provide a comprehensive framework for developing the application, ensuring efficient data management, secure authentication, and thorough testing capabilities.
+This table encompasses the detected technologies, their purposes, and implementations associated with the APPLICATION as derived from the provided metadata.

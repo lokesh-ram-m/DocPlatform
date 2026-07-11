@@ -4,59 +4,59 @@ sidebar_position: 1
 
 # Architecture
 
+## System Diagram
+
+_Generated from the application's knowledge graph (project references, calls, persistence)._
+
+```mermaid
+graph LR
+  n0["task-management-frontend"]
+  n1["TaskManagementApi"]
+  n2[("SQL Server")]
+  n0 -->|calls| n1
+  n1 -->|persists to| n2
+```
+
+
+
 ## Detected Patterns
-The architecture of the TaskFlow application likely follows a **Repository Pattern** with a focus on separation of concerns across different layers. It exhibits characteristics of **Layered Architecture** and may embrace a **Clean Architecture** approach given the presence of interfaces and services.
+The architecture of the TaskFlow application likely follows a Layered pattern. The main components are organized into repositories that suggest a Clean Architecture approach, utilizing interfaces and services. Dependency Injection (DI) practices are inferred from the use of interfaces for services and repositories in the API project.
 
 ## Solution Structure
-The TaskFlow application consists of two main repositories:
+The TaskFlow application is divided into two main repositories: 
 
 1. **TaskManagementBackend**
-   - **Project**: TaskManagementApi
-     - **Responsibilities**: This is a .NET API backend that manages tasks, projects, and user authentication. It serves as the main interface for client applications to interact with the task management functionalities.
-     - **Key Components**:
-       - Controllers: Handle incoming API requests for projects, users, authentication, and tasks.
-       - Services: Implement business logic for authentication, projects, tasks, and users.
+   - **TaskManagementApi** (DotNetApi)
+     - Responsible for providing the backend API endpoints for managing tasks, projects, and user authentication.
+     - Contains multiple controllers such as `ProjectController`, `UserController`, `AuthController`, `AgentController`, and `TaskController`.
 
 2. **TaskManagementFrontend**
-   - **Project**: task-management-frontend
-     - **Responsibilities**: This is an Angular frontend application that provides a user interface for the task management system. It allows users to interact with projects and tasks through various components and routing.
-     - **Key Components**:
-       - Angular Components: Each component is responsible for rendering parts of the user interface, such as login, project lists, and task lists.
+   - **task-management-frontend** (Angular)
+     - Responsible for the client-side application that interacts with the API.
+     - Contains components for user interaction, including login, registration, and displaying projects and tasks.
 
 ## Component Responsibilities
+- **TaskManagementApi**
+  - **Controllers**:
+    - `ProjectController`: Manages project-related requests (get all projects, get by ID, add, update, delete).
+    - `UserController`: Manages user-related actions (get all users, get by ID, update, deactivate).
+    - `AuthController`: Handles user authentication (login, register).
+    - `AgentController`: Manages AI chat interactions.
+    - `TaskController`: Oversees task-related requests (get all tasks, get by ID, add, update, delete).
+  - **Services**:
+    - Services implement business logic related to users, tasks, and projects, using interfaces for abstraction.
+  - **Entities**:
+    - `Project`, `Task`, and `User`: Define the key data structures handled by the application.
 
-### TaskManagementBackend
-- **Controllers**:
-  - **ProjectController**: Manages project-related API endpoints for retrieval, addition, update, and deletion of projects.
-  - **UserController**: Manages user-related API operations, such as retrieving and updating user details and deactivating users.
-  - **AuthController**: Handles user authentication, providing login and registration endpoints.
-  - **AgentController**: Facilitates interaction with an AI agent for chat-based operations.
-  - **TaskController**: Manages tasks with endpoints for retrieval, addition, update, and deletion.
-
-- **Services**:
-  - **AuthService**: Handles authentication logic.
-  - **ProjectService**: Manages project data and functionalities.
-  - **TaskService**: Manages task data and functionalities.
-  - **UserService**: Manages user data and functionalities.
-  - **TaskAgentService**: (?! functionality not explicitly defined in the metadata)
-
-### TaskManagementFrontend
-- **Components**:
-  - **assistant**: Provides an interface for interacting with the AI assistant.
-  - **login**: Handles user authentication and login logic.
-  - **navbar**: Displays navigation options throughout the app.
-  - **project-list**: Renders a list of projects for user interaction.
-  - **register**: Manages user registration.
-  - **task-list**: Displays tasks associated with projects.
+- **task-management-frontend**
+  - **Components**:
+    - Includes components for the assistant, login, navigation bar, project list, registration, and task list. These components provide the user interface for interactions.
 
 ## How the Pieces Fit Together
-- **Frontend** (Angular):
-  - Users interact with the Angular application, which communicates with the backend API through defined routes.
+The TaskFlow application has a clear flow of information between the frontend and backend components:
 
-- **API** (TaskManagementApi):
-  - The Angular frontend sends requests to its designated API endpoints to perform operations such as user login, project additions, task management, etc.
+1. The **task-management-frontend** interacts with the **TaskManagementApi** to retrieve and send data. This includes API calls for getting user information, managing tasks, and handling project data.
+  
+2. The **TaskManagementApi** persists data to the **SQL Server** (detected as the database). This relationship indicates that API calls from the frontend will lead to data being stored or queried from the SQL Server.
 
-- **Data Flow**:
-  - Requests from the frontend (e.g., to add a task) are routed to the appropriate controller in the API (e.g., TaskController).
-  - The controller invokes the corresponding service (e.g., TaskService) to handle business logic and interact with the database (using Dapper for data access).
-  - The response is sent back through the API to the frontend, where it updates the user interface accordingly.
+Overall, when a user interacts with the frontend (e.g., logging in or retrieving task lists), the frontend makes API calls to the backend, which processes these requests and interacts with the database accordingly. Thus, the frontend serves as the interface for user actions, while the backend handles business logic and data management.

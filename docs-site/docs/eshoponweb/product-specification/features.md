@@ -2,44 +2,33 @@
 sidebar_position: 2
 ---
 
-# eShopOnWeb Product Specification
+# eShopOnWeb Features
 
-## Features
+## User & Access Management
+- **Account Management:** Users can create and manage their accounts, including changing passwords and setting up two-factor authentication. This enhances security and provides control over personal information.
+- **Identity Verification:** The application facilitates account verification via email, aiding in user authentication and improving trust.
 
-### Task Management
+## Catalog Management
+- **Product Browsing:** Users can view a list of catalog items, complete with details like brand and type. This feature simplifies the shopping experience by making it easy to find products.
+- **Product Search and Filtering:** Users have the capability to search and filter catalog items based on different criteria, enhancing the discoverability of products tailored to their needs.
+- **Product Updates:** Administrators can create, update, and delete catalog items through a dedicated interface, ensuring the catalog remains current and relevant.
 
-#### Order Management
-- **Capability**: Users can view and manage their orders with options to check order details and track their status.
-- **Benefit**: This helps users keep track of their purchases, enabling better management of their orders and improving their overall experience with the application.
+## Shopping Cart Management
+- **Cart Management:** Users can add items to their shopping carts, view the cart, and remove items as needed. This functionality allows for a personalized shopping experience.
+- **Total Calculation:** The application calculates totals for items in the cart automatically, helping users understand their spending at a glance.
 
-#### Basket Management
-- **Capability**: Users can add, remove, and view items in their shopping basket, facilitating easy management of selected products prior to purchase.
-- **Benefit**: This feature supports users in curating their purchases conveniently, enhancing the shopping experience by simplifying the process of making decisions.
+## Order Management
+- **Order Tracking:** Users can view and track their orders, providing transparency in the purchasing process and enhancing customer satisfaction.
+- **Order History:** Users are able to access their order history, which simplifies repeat purchasing and helps users keep track of their past transactions.
 
-### User & Access Management
+## API Documentation
+- **User-Friendly API Documentation:** Built-in Swagger documentation enables users and developers to understand and interact with the API seamlessly, promoting easier integration and use.
 
-#### User Account Management
-- **Capability**: Users can manage their account settings, including updating personal information, changing passwords, and handling account security features such as two-factor authentication.
-- **Benefit**: This empowers users to maintain control over their personal data securely and ensures their accounts remain safe from unauthorized access.
+## Testing & Quality Assurance
+- **Automated Testing:** The application employs xUnit for automated testing, ensuring that features work as intended, thus maintaining high-quality standards in performance and reliability.
 
-#### Authentication
-- **Capability**: Users can log into the application using secure authentication methods, including standard login and JWT Bearer authentication.
-- **Benefit**: This increases security for user accounts, providing peace of mind that their information is well-protected.
+## Security Features
+- **Authentication:** The application utilizes JWT Bearer authentication, providing a secure way to validate user identity and protect user data.
+- **Access Control:** With the use of ASP.NET Core Identity, the application manages user roles and access levels, thus safeguarding sensitive operations and information. 
 
-### Catalog Management
-
-#### Catalog Browsing
-- **Capability**: Users can browse and search through a wide range of catalog items and brands, gaining access to detailed information about each product.
-- **Benefit**: This allows users to easily find and evaluate products that meet their needs, leading to more informed purchasing decisions.
-
-#### Catalog Item Management
-- **Capability**: Users can create, update, and delete catalog items (for authorized users), ensuring the catalog remains current and accurate.
-- **Benefit**: This functionality supports businesses in actively managing their product listings, helping to keep their offerings relevant and up to date.
-
-### API and Integration
-
-#### API Documentation
-- **Capability**: The use of Swagger enables users to access comprehensive API documentation to understand how to interact with the application programmatically.
-- **Benefit**: This aids developers in integrating and extending the application with confidence, leading to increased collaboration and enhancement of application features.
-
-Each of these features delivers significant value to users, enhancing their experience and making the eShopOnWeb a robust platform for e-commerce.
+By leveraging these capabilities, eShopOnWeb provides a comprehensive solution for users looking for an efficient and secure online shopping experience.

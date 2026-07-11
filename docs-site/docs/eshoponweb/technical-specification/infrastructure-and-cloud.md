@@ -5,30 +5,24 @@ sidebar_position: 3
 # Infrastructure & Cloud
 
 ## Hosting & Runtime
-The application **eShopOnWeb** consists of various projects using ASP.NET Core for backend services and a Blazor framework for the admin interface. The following components are identified:
+The **eShopOnWeb** application comprises several projects, each serving distinct roles:
 
-- **BlazorAdmin**: This is a .NET API that interacts with the core application for administrative purposes.
-- **PublicApi**: Another .NET API, likely serving as the main interface for client interactions.
-- **Web**: A .NET API which facilitates additional web-related functionalities and manages user interactions.
+- **BlazorAdmin**: This is a .NET API project that runs as an ASP.NET Core service.
+- **Infrastructure**: A .NET Library that aggregates shared utilities and services needed across the application.
+- **PublicApi**: Also a .NET API project, this project implements a Minimal API structure in ASP.NET Core, allowing for streamlined interaction with its endpoints.
+- **ApplicationCore**: A .NET Library housing the core business logic and entities.
+- **BlazorShared**: A .NET Library shared between the Blazor components and the main application logic.
+- **Web**: This is another .NET API project implementing the server-side functionalities for the web application.
 
-The architecture is containerizable, allowing deployment in environments like Docker or other orchestration services.
+The entire architecture is containerizable, allowing for deployment in various hosting environments, though specific hosting services are not detailed in the metadata.
 
 ## Cloud Services
-No dedicated cloud services were detected within the application. Instead, the application is designed to be host-agnostic and can run independently in various cloud environments or on-premises. However, there are references to Azure SDK components, indicating possible compatibility for Azure deployments without specifics on cloud services used.
+The application demonstrates capabilities associated with cloud services through the Azure SDK (`Microsoft.VisualStudio.Azure.Containers.Tools.Targets`). However, there are no specific cloud services or platforms explicitly mentioned within the metadata. This indicates that the application is host-agnostic and is designed to be containerizable.
 
 ## Configuration
-Configuration details appear to be sourced from several potential locations including `appsettings.json` and environment variables, although specific configuration files or environmental setup were not explicitly detailed in the metadata.
+Configuration sources indicate the presence of various application settings likely managed through `appsettings.json` files and environment variables, although specific configurations are not detailed in the provided metadata.
 
 ## Deployment Considerations
-The project utilizes several technologies such as:
-- **Entity Framework Core** for data access,
-- **JWT Authentication** for secure API access,
-- **ASP.NET Core Identity** for user management,
-- **OpenAPI / Swagger** for API documentation and exploration.
+Deployment considerations are derived from architecture and dependencies detected in the metadata. The application employs multiple projects that depend on one another, highlighting a layered architecture. Each component is designed to be loosely coupled, which eases the deployment process.
 
-Deployment processes are grounded on typical standards for ASP.NET applications but are not elaborated upon in detail. As container-ready and built with extensibility in mind, considerations might include:
-- Environment-specific settings,
-- Infrastructure scaling based on expected load,
-- Continuous integration/continuous deployment (CI/CD) practices are advisable but not specified.
-
-It is recommended to further establish the deployment pipeline based on best practices for modern cloud applications, considering potential use of Azure DevOps or GitHub Actions for streamlining deployment to various environments.
+The use of ASP.NET Core Identity for authentication implies that secure deployment practices will be necessary. Additionally, certain projects reference SQL Server and Entity Framework Core, suggesting that database migration and initialization might be required during deployment. Nevertheless, detailed deployment mechanisms (such as CI/CD setups) are not provided in the metadata.

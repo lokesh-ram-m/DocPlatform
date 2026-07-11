@@ -5,17 +5,17 @@ sidebar_position: 5
 # Security & Authentication
 
 ## Authentication
-The application utilizes JWT Bearer authentication for securing API endpoints, as indicated by the inclusion of the `Microsoft.AspNetCore.Authentication.JwtBearer` package. This mechanism allows for secure token-based authentication, ensuring that users can access the application only after proper authentication.
+The application employs **JWT Bearer authentication**, leveraging ASP.NET Core Identity for managing user authentication and authorization capabilities.
 
 ## Authorization
-All controllers in the application that manage user actions and access, such as the `ManageController` and `UserController`, are likely protected. However, specific authorization policies and their implementation details are not provided in the metadata.
+Controllers have been explicitly defined in the application. However, the metadata does not provide specific information regarding which controllers are protected or the level of access control enforced. Therefore, it is unclear how various controllers are secured.
 
 ## Secret & Password Handling
-The application references `Microsoft.AspNetCore.Identity.EntityFrameworkCore` in the `Infrastructure` project, suggesting that it utilizes ASP.NET Core Identity for managing user accounts and passwords. However, no specific password handling algorithm such as BCrypt was detected in the metadata. The handling of sensitive information (e.g., JWT secrets) is not detailed either.
+No specific mechanisms for secret or password handling (e.g., BCrypt) were detected in the provided metadata.
 
 ## Security-relevant Libraries
-- `Microsoft.AspNetCore.Identity.EntityFrameworkCore` for user management.
-- `Microsoft.AspNetCore.Authentication.JwtBearer` for JWT authentication.
-- `Swashbuckle.AspNetCore` for API documentation and security through OpenAPI.
-  
-No additional security-relevant libraries were detected beyond these.
+The application utilizes the following security-relevant libraries:
+- **Microsoft.AspNetCore.Authentication.JwtBearer** for JWT authentication.
+- **Microsoft.AspNetCore.Identity.EntityFrameworkCore** for managing identity and user accounts within the application.
+
+Other than these, minimal other libraries specifically pertaining to security were detected.

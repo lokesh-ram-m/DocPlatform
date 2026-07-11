@@ -44,6 +44,7 @@ public class DocumentationOrchestrator
         }
         application.Technologies = TechnologyAggregator.From(application);
         application.Capabilities = CapabilityClassifier.Classify(application);
+        application.Relationships = GraphBuilder.Build(application);   // knowledge graph
         return application;
     }
 
@@ -59,14 +60,40 @@ public class DocumentationOrchestrator
         // 1-3. Deterministic: scan + extract + classify.
         ApplicationModel application = BuildModel(applicationName, repositoryPaths, log);
 
-        // 4. AI: explain the metadata as Markdown.
+        // 4. AI: explain the metadata (incl. the knowledge graph) as Markdown.
         log("Generating documentation with the AI provider ...");
         DocumentationResult docs = await _aiProvider.GenerateDocumentationAsync(application, cancellationToken);
+
+        // 4b. Inject the deterministic knowledge-graph diagram into architecture.md.
+        InjectDiagram(docs, application);
 
         // 5. Write Markdown into the Docusaurus docs folder.
         log($"Writing {docs.Documents.Count} document(s) to {outputDirectory}");
         _writer.Write(docs, outputDirectory);
 
         return application;
+    }
+
+    private static void InjectDiagram(DocumentationResult docs, ApplicationModel application)
+    {
+        string mermaid = DiagramGenerator.ToMermaid(application);
+        if (string.IsNullOrEmpty(mermaid)) return;
+
+        GeneratedDocument? arch = docs.Documents.FirstOrDefault(d =>
+            d.FileName.Equals("architecture.md", StringComparison.OrdinalIgnoreCase));
+        if (arch is null) return;
+
+        string section = "## System Diagram\n\n" +
+                         "_Generated from the application's knowledge graph (project references, calls, persistence)._\n\n" +
+                         mermaid + "\n";
+
+        // Insert the diagram right after the first heading line.
+        string[] lines = arch.Markdown.Split('\n');
+        int headingIndex = Array.FindIndex(lines, l => l.TrimStart().StartsWith("#"));
+        if (headingIndex >= 0)
+            arch.Markdown = string.Join('\n', lines[..(headingIndex + 1)]) + "\n\n" + section + "\n" +
+                            string.Join('\n', lines[(headingIndex + 1)..]);
+        else
+            arch.Markdown = section + "\n" + arch.Markdown;
     }
 }

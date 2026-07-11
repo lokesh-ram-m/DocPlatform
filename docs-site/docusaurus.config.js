@@ -23,10 +23,13 @@ const config = {
   },
 
   // Treat .md as plain CommonMark (not MDX), so tokens like {id} or Task<T>
-  // in the generated API docs don't get parsed as JSX.
+  // in the generated API docs don't get parsed as JSX. Enable Mermaid diagrams.
   markdown: {
     format: 'md',
+    mermaid: true,
   },
+
+  themes: ['@docusaurus/theme-mermaid'],
 
   presets: [
     [

@@ -5,24 +5,17 @@ sidebar_position: 5
 # Security & Authentication
 
 ## Authentication
-The application uses **JWT Bearer authentication** to manage authentication. This mechanism allows secure communication between the client and server by issuing a token upon successful login, which is then used for subsequent requests to verify user identity.
+The application utilizes JWT Bearer authentication for secure user authentication. This mechanism allows users to log in and receive a token that can be used to access protected resources.
 
 ## Authorization
-The exposed controllers include:
-- `ProjectController`
-- `UserController`
-- `AuthController`
-- `AgentController`
-- `TaskController`
-
-It is not explicitly stated which of these controllers are protected by authorization logic. Therefore, additional details on their security status regarding access and permissions are not provided.
+The metadata does not explicitly indicate whether any controllers are protected by authorization mechanisms. Additional specifics on controller-level security may be necessary to clarify this aspect.
 
 ## Secret & Password Handling
-The application employs **BCrypt** for password hashing, which provides a secure method for managing user passwords. This technique helps protect user credentials from unauthorized access by hashing passwords before storage.
+The application employs BCrypt for password hashing, ensuring secure storage of user credentials.
 
 ## Security-relevant Libraries
-The notable libraries contributing to security in this application include:
-- **BCrypt.Net-Next**: for hashing passwords securely.
-- **Microsoft.AspNetCore.Authentication.JwtBearer**: for implementing JWT Bearer authentication.
+The following security-related libraries are detected in the application:
+- **BCrypt.Net-Next**: Used for password hashing.
+- **Microsoft.AspNetCore.Authentication.JwtBearer**: Implemented for JWT Bearer authentication.
 
-No other security-relevant libraries were detected.
+Overall, the security handling appears robust, with focus on secure authentication and password management. However, there are no details regarding specific protected routes or authorization enforcement at the controller level.

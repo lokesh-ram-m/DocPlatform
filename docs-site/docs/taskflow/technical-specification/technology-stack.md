@@ -4,20 +4,21 @@ sidebar_position: 2
 
 # Technology Stack
 
-| Concern                    | Technology                                             | Details                                                  |
-|---------------------------|-------------------------------------------------------|----------------------------------------------------------|
-| **Runtime & Frameworks**  | .NET (net9.0)                                        | Target framework for backend.                            |
-|                           | ASP.NET Core                                          | Web framework for building the API.                     |
-|                           | Angular                                               | Framework for building the frontend.                     |
-| **Data Access**           | Dapper                                                | Micro ORM used for data access.                          |
-| **Database**              | SQL Server                                            | Database technology utilized for data storage.           |
-|                           | Microsoft.Data.SqlClient                             | ADO.NET provider for SQL Server.                         |
-| **Authentication**        | JWT Authentication                                   | Utilizes JSON Web Tokens for secure authentication.      |
-|                           | Microsoft.AspNetCore.Authentication.JwtBearer        | Middleware for JWT Bearer authentication in ASP.NET.    |
-| **API Documentation**     | OpenAPI                                              | API documentation standard enabled via ASP.NET.         |
-|                           | Microsoft.AspNetCore.OpenApi                         | ASP.NET library for OpenAPI support.                     |
-|                           | Swagger / Swashbuckle                                | Library for generating Swagger UI documentation.         |
-| **AI/LLM**                | Semantic Kernel                                       | Framework for AI capabilities integrated from Microsoft.  |
-|                           | Microsoft.SemanticKernel                              | Library facilitating semantic processing and AI features. |
-|                           | Microsoft.SemanticKernel.Connectors.AzureAIInference | Connector for Azure AI inferences.                       |
-| **Cross-Cutting Libraries**| BCrypt.Net-Next                                     | Library for password hashing and security.               |
+| Concern                  | Technology                                        | Details                                         |
+|-------------------------|--------------------------------------------------|------------------------------------------------|
+| Runtime & Framework      | .NET (net9.0)                                   | Target framework for backend API               |
+|                          | ASP.NET Core                                    | Web framework for building APIs                |
+|                          | Angular                                         | Frontend framework for user interface          |
+| Data Access              | Dapper (micro-ORM)                             | Lightweight ORM for data access                |
+| Database                 | SQL Server                                      | Database used for data persistence             |
+| Authentication           | JWT Bearer authentication                       | Secure authentication method for APIs          |
+|                          | BCrypt password hashing                          | Security for password storage                   |
+| API Documentation        | OpenAPI                                         | Specification standard for documenting APIs     |
+|                          | Swagger / Swashbuckle                           | Tool for generating interactive API documentation |
+| AI/LLM                  | Semantic Kernel                                  | AI capabilities implemented in the application  |
+| Cross-Cutting Libraries   | Microsoft.AspNetCore.Authentication.JwtBearer   | Library for JWT authentication                  |
+|                          | Microsoft.AspNetCore.OpenApi                     | Library for OpenAPI support                     |
+|                          | Microsoft.Data.SqlClient                        | SQL Client library for database operations      |
+|                          | marked                                           | Used for markdown parsing in frontend           |
+|                          | rxjs                                            | Reactive programming library used in frontend    |
+|                          | tslib                                           | A library providing helpers for TypeScript     |

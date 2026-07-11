@@ -5,20 +5,22 @@ sidebar_position: 4
 # Data, Storage & Messaging
 
 ## Databases
-The application employs **PostgreSQL** as its database management system, indicated by the use of the package `Aspire.Npgsql.EntityFrameworkCore.PostgreSQL` within the infrastructure project. Additionally, it incorporates varying database technologies, including **SQLite** as referenced by `Microsoft.EntityFrameworkCore.Sqlite`, and **SQL Server** as provided by `Microsoft.EntityFrameworkCore.SqlServer`. The presence of the `ApplicationDbContext` suggests the use of a DbContext for handling data operations.
+The application utilizes the following database technologies:
+- **PostgreSQL**: Detected as the primary database solution through the metadata in the Infrastructure project, specifically referenced in the capabilities where it indicates dependency on `Aspire.Npgsql.EntityFrameworkCore.PostgreSQL`. 
 
 ## Data Access Approach
-The application utilizes **Entity Framework Core (EF Core)** for data access, as evidenced by the package reference to `Microsoft.EntityFrameworkCore`. This framework facilitates working with databases using .NET objects, allowing for a more streamlined and efficient interaction with data.
+The application's data access is conducted via:
+- **Entity Framework Core (EF Core)**: This is identified as the primary ORM used, referenced in the capabilities section with the source `Microsoft.EntityFrameworkCore`.
 
 ## Entities / Domain Model
-The application defines the following domain entities:
+The domain model of the application includes the following entities:
 - **TodoItem**
 - **TodoList**
 
-These entities reside within the **Domain** project but do not include any additional properties or relationships in the current metadata context.
+These entities are defined in the Domain project which is a part of the overall architecture.
 
 ## Caching
-No caching strategies or technologies were detected in the current metadata.
+No caching mechanisms were detected based on the provided metadata.
 
 ## Messaging & Queuing
 No message queue or event bus was detected in the current metadata.

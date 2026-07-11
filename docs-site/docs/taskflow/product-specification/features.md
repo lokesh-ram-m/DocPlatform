@@ -2,33 +2,51 @@
 sidebar_position: 2
 ---
 
-# Features of TaskFlow
+# TaskFlow Product Specification
 
 ## Task Management
-- **Create Tasks**: Users can add new tasks to their projects. This helps in organizing work by breaking down projects into manageable parts.
-- **Update Tasks**: Users can modify existing tasks to reflect changes in project needs or priorities, ensuring that everyone is working on the most relevant tasks.
-- **Delete Tasks**: Users can remove tasks that are no longer needed, keeping their task lists clear and focused.
-- **View Tasks**: Users can access a comprehensive list of tasks associated with their projects, enabling them to track progress and manage workloads effectively.
 
-## Project Management
-- **Create Projects**: Users can initiate new projects to start tracking work and resources. This is essential for planning and executing new initiatives.
-- **Update Projects**: Users can adjust project details as requirements evolve, allowing for flexible management of goals and tasks.
-- **Delete Projects**: Users have the option to remove projects that are either completed or no longer necessary, streamlining their focus on current initiatives.
-- **View Projects**: Users can get an overview of all projects, helping them monitor current activities and plan future efforts.
+### Project Management
+- **Capability**: Create and manage projects.
+- **What it lets users do**: Users can add, update, and delete projects, as well as retrieve them based on various criteria.
+- **Why it helps**: This allows teams to organize their work efficiently, set project goals, and track progress, leading to improved collaboration and productivity.
+
+### Task Management
+- **Capability**: Create and manage tasks within projects.
+- **What it lets users do**: Users can add, update, and delete tasks, as well as retrieve tasks associated with specific projects.
+- **Why it helps**: It enables users to break down projects into manageable components, assign tasks, and monitor their completion, thus facilitating better time management and accountability.
 
 ## User Management
-- **User Registration**: New users can sign up, enabling them to access the platform and participate in task and project management.
-- **User Login**: Existing users can log in securely, ensuring that access to sensitive project information is protected.
-- **Manage User Profiles**: Users can update their profiles, helping them maintain accurate personal information and preferences.
+
+### User Access and Authentication
+- **Capability**: User registration, login, and management.
+- **What it lets users do**: Users can register for the application, log in securely, and update or deactivate their account as needed.
+- **Why it helps**: Ensuring secure access and personalized user experiences through authentication helps protect sensitive information and enables users to maintain control over their accounts.
 
 ## AI Integration
-- **AI Assistance**: Users can interact with an AI assistant to receive help and insights on project management, improving decision-making and efficiency.
 
-## Security Features
-- **Secure Access**: The application uses JWT Bearer authentication to ensure that only authorized users can access its features, protecting sensitive information.
-- **Password Security**: User passwords are securely hashed with BCrypt, enhancing the security of user accounts against unauthorized access.
+### AI Assistant Features
+- **Capability**: Interact with an AI agent for assistance.
+- **What it lets users do**: Users can chat with an AI assistant to receive help or guidance related to their tasks or projects.
+- **Why it helps**: This feature can enhance productivity by providing instant support and information, allowing users to focus more on their primary objectives.
 
-## API Documentation
-- **Comprehensive API Documentation**: The application provides clear OpenAPI and Swagger documentation for its API, making it easy for developers to understand and interact with the application's capabilities.
+## Security
 
-Through these capabilities, TaskFlow empowers users to efficiently manage tasks and projects, improve collaboration, and ensure security, thereby enhancing productivity and streamlining workflows.
+### Secure Authentication
+- **Capability**: Implement robust security measures for user authentication.
+- **What it lets users do**: Users' credentials are securely managed using JWT Bearer tokens and password hashing.
+- **Why it helps**: Protecting users' credentials and maintaining security helps prevent unauthorized access and ensures the confidentiality of user data.
+
+## Documentation and Support
+
+### API Documentation
+- **Capability**: Provide comprehensive API documentation.
+- **What it lets users do**: Users, including developers and partners, can access detailed API documentation via OpenAPI and Swagger integration.
+- **Why it helps**: Clear documentation facilitates integration and usage, promoting a better understanding of the application’s capabilities and enhancing development efficiency.
+
+## Database Management
+
+### Data Persistence
+- **Capability**: Manage data storage and retrieval.
+- **What it lets users do**: The application utilizes SQL Server for persistent data storage, enabling effective management of projects, tasks, and user information.
+- **Why it helps**: Reliable data storage ensures that all application data is accessed efficiently, supporting smooth operations and user experience.

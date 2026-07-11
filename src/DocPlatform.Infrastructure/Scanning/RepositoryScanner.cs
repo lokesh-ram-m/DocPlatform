@@ -66,7 +66,8 @@ public class RepositoryScanner : IRepositoryScanner
                 .ToList();
 
             project.ProjectReferences = doc.Descendants("ProjectReference")
-                .Select(e => Path.GetFileNameWithoutExtension(e.Attribute("Include")?.Value ?? string.Empty))
+                // Normalize Windows backslashes so this works cross-platform (macOS/Linux).
+                .Select(e => Path.GetFileNameWithoutExtension((e.Attribute("Include")?.Value ?? string.Empty).Replace('\\', '/')))
                 .Where(v => !string.IsNullOrWhiteSpace(v))
                 .ToList();
 

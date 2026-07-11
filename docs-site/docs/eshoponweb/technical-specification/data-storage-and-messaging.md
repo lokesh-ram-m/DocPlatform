@@ -5,39 +5,46 @@ sidebar_position: 4
 # Data, Storage & Messaging
 
 ## Databases
-The following databases are detected in the application metadata:
+The application utilizes two database contexts:
+- **AppIdentityDbContext**: This context is likely designed to handle identity-related data, leveraging ASP.NET Core Identity.
+- **CatalogContext**: This context is likely used for managing catalog-related data.
 
-- **AppIdentityDbContext**: This context is likely used for managing application identity and authentication-related data.
-- **CatalogContext**: This context appears to be focused on handling data related to the product catalog.
+Both contexts are part of the **Infrastructure** project and are configured to support EF Core.
 
 ## Data Access Approach
-The application employs **Entity Framework Core** as its primary data access technology. This is evidenced by the presence of the `Microsoft.EntityFrameworkCore` package and specific database contexts.
+The application employs **Entity Framework Core** (EF Core) for data access. This technology provides a robust framework for working with relational data and is included in the `Infrastructure` project through the `Ardalis.Specification.EntityFrameworkCore` package.
 
 ## Entities / Domain Model
-The application contains the following entities that comprise its domain model:
+The application defines a variety of entities within the **ApplicationCore** and **BlazorShared** projects. These include:
+- **ApplicationCore Entities**: 
+  - Address
+  - Basket
+  - BasketItem
+  - Buyer
+  - CatalogBrand
+  - CatalogItem
+  - CatalogItemDetails
+  - CatalogItemOrdered
+  - CatalogType
+  - Order
+  - OrderItem
+  - PaymentMethod
+- **BlazorShared Entities**:
+  - CatalogBrand
+  - CatalogItem
+  - CatalogType
+  - ErrorDetails
+  - LookupData
+- **UnitTests Entities**:
+  - BasketAddItem
+  - BasketRemoveEmptyItems
+  - BasketTotalItems
+  - OrderTotal
 
-- **Address**
-- **Basket**
-- **BasketItem**
-- **Buyer**
-- **CatalogBrand**
-- **CatalogItem**
-- **CatalogItemDetails**
-- **CatalogItemOrdered**
-- **CatalogType**
-- **Order**
-- **OrderItem**
-- **PaymentMethod**
-
-Additional entities relevant to testing include:
-
-- **BasketAddItem**
-- **BasketRemoveEmptyItems**
-- **BasketTotalItems**
-- **OrderTotal**
+These entities represent core components of the application's domain model.
 
 ## Caching
-No caching mechanism was detected.
+No caching mechanism was detected in the current metadata.
 
 ## Messaging & Queuing
 No message queue or event bus was detected in the current metadata.

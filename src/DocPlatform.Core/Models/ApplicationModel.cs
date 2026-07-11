@@ -17,6 +17,9 @@ public class ApplicationModel
 
     // Categorized capabilities (auth, storage, messaging, cloud, …) detected from packages.
     public List<DetectedCapability> Capabilities { get; set; } = new();
+
+    // Knowledge graph: how the projects relate (dependencies, calls, persistence).
+    public List<Relationship> Relationships { get; set; } = new();
 }
 
 public class RepositoryModel

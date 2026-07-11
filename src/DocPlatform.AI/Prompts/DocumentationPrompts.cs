@@ -52,7 +52,9 @@ public static class DocumentationPrompts
             "# Architecture\n" +
             "Sections: ## Detected Patterns (heuristic; hedge — Repository, Layered, DI, Clean Architecture based on interfaces/services/refs). " +
             "## Solution Structure (each repository and its projects, with responsibilities). " +
-            "## Component Responsibilities. ## How the Pieces Fit Together (frontend ↔ API ↔ data flow)." + meta);
+            "## Component Responsibilities. ## How the Pieces Fit Together — describe the flow using the " +
+            "`relationships` array in the metadata (which project depends on which, frontend→API calls, persistence to the database). " +
+            "Do NOT draw a diagram (one is added automatically); describe the relationships in prose." + meta);
 
         yield return new(TechnicalGroup, "technology-stack.md", 2,
             "# Technology Stack\n" +

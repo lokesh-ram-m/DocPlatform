@@ -5,18 +5,23 @@ sidebar_position: 3
 # Infrastructure & Cloud
 
 ## Hosting & Runtime
-The **TaskFlow** application consists of two main parts: a backend service built with **ASP.NET Core** and a frontend application developed using **Angular**. The backend is structured as a **DotNetApi** targeting **.NET 9.0**, which indicates it is designed to run as a web service. The frontend operates as a **Single Page Application (SPA)** using Angular, making it suitable for modern web environments. Both components are containerizable, allowing them to be deployed in various runtime environments.
+The application, **TaskFlow**, is structured into two main components that utilize contemporary technologies:
+
+1. **Backend (TaskManagementBackend)**: The backend is implemented as a .NET API targeting the .NET 9.0 framework. It runs as an ASP.NET Core service which allows it to be hosted in various environments, including on-premises or in the cloud. The backend is composed of various controllers that facilitate communication via RESTful endpoints.
+
+2. **Frontend (TaskManagementFrontend)**: The frontend is built as an Angular Single Page Application (SPA). It is designed to be containerizable, allowing for flexible deployment options.
 
 ## Cloud Services
-No specific cloud services have been detected in the metadata. The application appears to be host-agnostic and can be run in a containerized environment or on various platforms as long as the required runtime components are available.
+No specific cloud services were detected in the metadata. The application is host-agnostic and compatible with containerized deployments.
 
 ## Configuration
-Configuration sources for the **TaskFlow** application are not explicitly detailed in the metadata. However, common practices in ASP.NET Core applications typically include using **appsettings.json** files and environment variables for configuration settings. Further investigation into the actual codebase may be necessary to identify specific configuration approaches.
+Configuration sources indicated include:
+- **JWT Authentication**: The backend uses JWT Bearer tokens for authentication, suggesting environment configuration for secret keys and token settings may be required.
+- Configurations can typically be managed through appsettings files or environment variables, though no specific sources were detailed in the metadata.
 
 ## Deployment Considerations
-The application can likely be deployed using standard methods applicable to ASP.NET Core and Angular applications, considering its containerized nature. Common practices include:
-- Utilizing Docker containers for packaging both the frontend and backend applications.
-- Implementing CI/CD pipelines for automated testing and deployment.
-- Environment-specific configuration adjustments during deployment stages (e.g., development, staging, production).
-
-Since no specific deployment strategy is documented in the metadata, these suggestions are based on common deployment paradigms for similar architectures.
+Deployment considerations for **TaskFlow** include:
+- The backend and frontend can be deployed independently, with the frontend calling the backend API.
+- Given that the application is built using .NET and Angular, standard practices for deploying .NET applications and SPAs apply.
+- It may be beneficial to use a web server or reverse proxy for production environments, especially for routing to the API and serving the frontend application.
+- The absence of details on message queues or specific cloud storage solutions indicates a straightforward deployment without complex dependencies.
