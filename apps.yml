@@ -1,0 +1,11 @@
+# DocPlatform — the applications to document.
+# Each repo entry can be a git URL (shallow-cloned automatically) or a local path.
+# Used by headless mode:  dotnet run --project src/DocPlatform.Console -- --config apps.yml
+applications:
+  - name: eShopOnWeb
+    repos:
+      - https://github.com/dotnet-architecture/eShopOnWeb.git
+
+  - name: CleanArchitecture
+    repos:
+      - https://github.com/jasontaylordev/CleanArchitecture.git

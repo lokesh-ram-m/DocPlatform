@@ -5,16 +5,16 @@ sidebar_position: 5
 # Security & Authentication
 
 ## Authentication
-The application utilizes **ASP.NET Core Identity** for authentication purposes. No specific authentication mechanism such as JWT Bearer is mentioned in the metadata.
+The application employs **ASP.NET Core Identity** as its authentication mechanism, which is part of the capabilities detected. However, specific implementation details, such as methods or token types (e.g., JWT Bearer), are not explicitly documented in the metadata.
 
 ## Authorization
-There is no explicit information available regarding protected controllers in the application. All controllers detected do not have enforced authorization restrictions listed.
+There are no controllers explicitly listed in the metadata, which limits our ability to confirm if any controllers have protected endpoints or specific authorization mechanisms in place.
 
 ## Secret & Password Handling
-The metadata does not provide any details about secret management or password handling mechanisms such as BCrypt.
+No specific technology or library for secret or password handling (like BCrypt) was detected in the application metadata.
 
 ## Security-relevant Libraries
-The application includes the following security-relevant libraries:
-- **Microsoft.AspNetCore.Identity.EntityFrameworkCore** - for managing user identities within the application.
+The metadata indicates the presence of the following security-relevant library:
+- **Microsoft.AspNetCore.Identity.EntityFrameworkCore** (for identity management)
 
-If more security libraries or mechanisms were present, they are not detected in the provided metadata.
+In summary, the gathered data about security and authentication mechanisms is minimal and lacks detailed specifications regarding secrets management and authorization practices.

@@ -22,3 +22,6 @@ output/
 node_modules/
 .docusaurus/
 docs-site/build/
+
+# Headless mode: cloned source repos
+.sources/

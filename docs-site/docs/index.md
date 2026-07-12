@@ -10,4 +10,3 @@ AI-generated Product & Technical specifications for the following applications:
 
 - **[CleanArchitecture](/cleanarchitecture/product-specification/overview)** — Product & Technical specs
 - **[eShopOnWeb](/eshoponweb/product-specification/overview)** — Product & Technical specs
-- **[TaskFlow](/taskflow/product-specification/overview)** — Product & Technical specs

@@ -32,57 +32,40 @@ graph LR
 
 
 ## Detected Patterns
-The architecture of the `eShopOnWeb` application appears to follow patterns associated with **Layered Architecture** and **Clean Architecture**, leveraging principles such as Dependency Injection (DI) and separation of concerns. Each project is structured around distinct functionalities, which facilitates maintainability and testability.
+The architecture of the application appears to utilize several design patterns, including:
+- **Repository Pattern:** Promotes a separation of concerns and encapsulates data access logic, suggesting the use of repositories for managing data.
+- **Layered Architecture:** Indicates distinct layers for separation of functionalities (e.g., presentation, business logic, data access).
+- **Dependency Injection (DI):** Likely implemented, enhancing testability and separation of dependencies.
+- **Clean Architecture:** Suggests usage of interfaces and services to define boundaries and interactions between different parts of the application.
 
 ## Solution Structure
-The application consists of the following repositories and projects, each with specific responsibilities:
-
-1. **BlazorAdmin**  
-   - **Type**: DotNetApi  
-   - **Responsibilities**: Serves as the administration interface. Contains services for catalog item management, such as `CatalogItemService`, `CatalogLookupDataService`, and utilities like `HttpService` and `ToastService`. It depends on `BlazorShared`.
-
-2. **Infrastructure**  
-   - **Type**: DotNetLibrary  
-   - **Responsibilities**: Provides core data access and identity functionalities. Houses DbContexts like `AppIdentityDbContext` and `CatalogContext`. Services for querying baskets and identity tokens are included. It depends on `ApplicationCore`.
-
-3. **PublicApi**  
-   - **Type**: DotNetApi  
-   - **Responsibilities**: Acts as the public-facing API layer. It contains minimal API endpoints for managing catalog types and items. This project is responsible for routing and API documentation with Swagger. It depends on `ApplicationCore` and `Infrastructure`.
-
-4. **ApplicationCore**  
-   - **Type**: DotNetLibrary  
-   - **Responsibilities**: Contains the domain entities and business logic, with interfaces for repository patterns and services like `BasketService` and `OrderService`. It connects with `BlazorShared`.
-
-5. **BlazorShared**  
-   - **Type**: DotNetLibrary  
-   - **Responsibilities**: Contains shared entities and interfaces such as catalog items, brands, and lookup data required by both client and server components.
-
-6. **Web**  
-   - **Type**: DotNetApi  
-   - **Responsibilities**: Provides the main web application interface, handling user interactions, along with controllers for user account management and order processing. It depends on several components, including `ApplicationCore`, `BlazorAdmin`, `BlazorShared`, and `Infrastructure`.
-
-7. **Testing Projects**:
-   - `PublicApiIntegrationTests`, `IntegrationTests`, `UnitTests`, and `FunctionalTests` ensure the reliability of the application through various testing strategies. They depend on respective services and APIs defined in the main projects.
+The eShopOnWeb application is structured into multiple projects within the main repository:
+- **BlazorAdmin:** A DotNetApi project that provides administration capabilities, utilizing various services such as `CatalogItemService` and `ToastService`, and depends heavily on the `BlazorShared` project for shared logic.
+- **Infrastructure:** A DotNetLibrary project that contains data access components and services (`BasketQueryService`, `IdentityTokenClaimService`), managing the identity and catalog context databases.
+- **PublicApi:** A DotNetApi project that defines the entry points for API interactions, implementing several endpoints for catalog items and brands. It relies on both `ApplicationCore` and `Infrastructure` projects.
+- **ApplicationCore:** A DotNetLibrary project that encapsulates the core business logic and domain entities, defining services like `OrderService` and `BasketService`.
+- **BlazorShared:** A DotNetLibrary project that houses shared interfaces and entities, used by both the BlazorAdmin and ApplicationCore projects.
+- **Web:** A DotNetApi project, acting as the main entry point for user interactions, managing API calls and utilizing services for basket and catalog view models. It interrelates with multiple projects, encasing critical functionalities.
+- **Testing Projects:** Several projects (`PublicApiIntegrationTests`, `IntegrationTests`, `UnitTests`, and `FunctionalTests`) designed for assessing the different parts of the application.
 
 ## Component Responsibilities
-- **BlazorAdmin**: UI for Admin functionalities and CRUD operations on catalog items.
-- **Infrastructure**: Data access layer for identities and catalog data with Entity Framework Core and InMemory database support.
-- **PublicApi**: RESTful endpoints for catalog operations, secured with JWT Authentication.
-- **ApplicationCore**: Centralized business logic and data constructs representing the domain.
-- **BlazorShared**: Provides common interfaces and entities shared across frontend and backend projects.
-- **Web**: Manages user interactions and integrates various services for order management, authentication, and state management.
+Each component serves distinct responsibilities:
+- **BlazorAdmin:** Manages the admin features of the application including item management.
+- **Infrastructure:** Handles data persistence and identity services, interfacing with databases and providing necessary data access services.
+- **PublicApi:** Exposes minimal API endpoints to interact with the underlying data and services, offering public access.
+- **ApplicationCore:** Contains business logic and definitions of domain entities, playing a critical role in the application's core functionality.
+- **BlazorShared:** Contains shared resources, including common interfaces and entities used across multiple projects.
+- **Web:** Manages user interactions through a client-side application, integrating front-end components with various services.
 
 ## How the Pieces Fit Together
-The relationship between the components is primarily transactional and functional, with distinct dependencies among them:
+The flow of the application starts when the user interacts with the Web project. 
 
-- **`Web`** relies on `ApplicationCore` for core business logic concerning user actions, such as ordering processes and basket management. Additionally, it features dependencies on `BlazorAdmin` for administrative features and `BlazorShared` for shared data contracts, with operations that leverage the functionality in `Infrastructure` to persist user data and catalog items.
-  
-- **`PublicApi`** serves as the gate for external interactions, pulling services from `Infrastructure` and data models from `ApplicationCore` to handle API requests related to catalog management effectively.
+1. The **Web** project makes API calls to the **PublicApi** to perform operations such as retrieving catalog items or managing user accounts.
+2. The **PublicApi** depends on both the **ApplicationCore** and **Infrastructure** projects:
+   - It calls services from the **ApplicationCore** to implement business logic, such as placing orders or accessing basket services.
+   - It also utilizes the **Infrastructure** project to manage database interactions and user identity handling.
+3. The **Infrastructure** project persists data to a database, indicated by its relationship of "persists to" with the database (though the specific database technology is not detailed in the metadata).
+4. The **BlazorAdmin** depends on the **BlazorShared** project for common functionalities, highlighting a shared resource strategy.
+5. The **Web** project interacts with shared entities and services from the **BlazorShared** to manage its own data flow and user interface components.
 
-- **`BlazorAdmin`** and `BlazorShared` provide backend services for catalog management and shared definitions required by both user-facing applications and administrative interfaces.
-
-- **`Infrastructure`** is responsible for providing the necessary DbContext for identity and catalog data, underpinning the persistence strategy for the application.
-
-- The **Dependency flow** can be summarized as follows: `Web` → `ApplicationCore`, `Web` → `BlazorAdmin`, `Web` → `BlazorShared`, `Web` → `Infrastructure`, `PublicApi` → `ApplicationCore`, `PublicApi` → `Infrastructure`, and `Infrastructure` persists data.
-
-This structure forms a cohesive unit that demonstrates clarity in responsibilities and facilitates scalability within the application ecosystem.
+Overall, these interdependencies create a structured flow that ensures smooth interactions between components and promotes organized data handling throughout the application.

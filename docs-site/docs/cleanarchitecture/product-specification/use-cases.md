@@ -4,17 +4,17 @@ sidebar_position: 3
 
 # Use Cases
 
-## Product Manager Scenario
-As a Product Manager, I am responsible for tracking the progress of our tasks and ensuring timely delivery. Using the CleanArchitecture application, I easily create a new Todo list for our current project, adding tasks as Todo items. I can view the status of each item and update details as needed. This allows me to stay aligned with the team’s progress, ensuring we meet our deadlines.
+## Use Case 1: Product Manager Planning New Features
+As a Product Manager, Maria needs to plan the next features for the CleanArchitecture application. She logs into the project management tool and reviews the current feedback from users, which highlights a demand for better organization of tasks. Maria uses the application’s existing capabilities to create new TodoLists and TodoItems as part of her planning. She collaborates with the development team to ensure these features align with the application’s existing structure and capabilities.
 
-## Business Unit Scenario
-In my role within the Business Unit, I often need to assess task completion and project timeline. I utilize the CleanArchitecture application to generate a report of all Todo lists and their associated tasks. By reviewing this data, I can identify any bottlenecks, communicate with teams, and adjust priorities on the fly, helping maintain our commitments to clients.
+## Use Case 2: Business Unit Monitoring Progress
+Tom, a member of the Business Unit, requires regular updates on task completion within the CleanArchitecture application. He utilizes the app to generate reports on TodoLists and the status of associated TodoItems. Every week, Tom reviews these reports and discusses project progress in meetings, ensuring that all tasks are on track and aligning with business objectives. The efficiency of tracking tasks helps Tom address potential delays promptly.
 
-## End User Scenario
-As an end user of the CleanArchitecture application, I want to manage my personal tasks effectively. I log in to the application and begin by creating a new Todo list named "Weekend Projects." I add several Todo items, like "Paint the fence" and "Organize the garage," and set reminders. Throughout the weekend, I can check off tasks as I complete them, making it easier to enjoy my time knowing I'm on track with my projects.
+## Use Case 3: End User Managing Daily Tasks
+Sarah, an end user of the CleanArchitecture application, uses it to keep track of her daily tasks. She logs in to create a new TodoList titled "Weekend Chores" and adds individual TodoItems such as “Clean the garage” and “Mow the lawn.” Throughout the weekend, Sarah checks off these items as she completes them. The application notifies her when she has completed all tasks, providing her with a sense of accomplishment and helping her manage her time effectively.
 
-## Team Collaboration Scenario
-During our daily standup, our team logs into the CleanArchitecture application to review active Todo lists. We quickly navigate through the tasks and verify who is responsible for what. By collaborating on this platform, we can address any issues, discuss upcoming deadlines, and ensure everyone is aware of their responsibilities, fostering better communication within the team.
+## Use Case 4: User Registration and Management
+Jake, a new user, wants to register on the CleanArchitecture platform. He navigates to the registration page, fills out his details, and submits the form. The application, powered by ASP.NET Core Identity, processes his information and creates a user profile. Later, Jake can log in, manage his TodoLists, and add or edit items seamlessly, enjoying a user-friendly experience that keeps him engaged.
 
-## Task Tracking Scenario
-As a project lead, I need to manage multiple projects simultaneously. I use CleanArchitecture to maintain separate Todo lists for each project. When a team member provides an update, I can easily find the specific Todo item, edit its details, or reassign it if necessary. This streamlined process allows me to keep all tasks organized and accessible, improving overall project management efficiency.
+## Use Case 5: Admin Querying Weather Forecasts
+As part of his role, John, an administrator, often checks the current weather forecasts to plan for events. He uses the CleanArchitecture application to access the WeatherForecasts feature. By simply clicking a button, he retrieves the latest forecasts from the application, ensuring he has the most up-to-date information for planning purposes. This capability saves him time and makes organizing events much simpler.

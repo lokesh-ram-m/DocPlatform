@@ -11,8 +11,9 @@ const config = {
     v4: true,
   },
 
-  url: 'https://example.com',
-  baseUrl: '/',
+  // For GitHub Pages the CI sets DOCS_URL + DOCS_BASE_URL (e.g. /DocPlatform/).
+  url: process.env.DOCS_URL || 'https://example.com',
+  baseUrl: process.env.DOCS_BASE_URL || '/',
 
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',

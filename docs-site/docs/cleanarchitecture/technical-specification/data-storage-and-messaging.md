@@ -5,22 +5,20 @@ sidebar_position: 4
 # Data, Storage & Messaging
 
 ## Databases
-The application utilizes the following database technologies:
-- **PostgreSQL**: Detected as the primary database solution through the metadata in the Infrastructure project, specifically referenced in the capabilities where it indicates dependency on `Aspire.Npgsql.EntityFrameworkCore.PostgreSQL`. 
+The application leverages the **PostgreSQL** database, as indicated by the `Aspire.Npgsql.EntityFrameworkCore.PostgreSQL` package included in the infrastructure project. One `DbContext` named **ApplicationDbContext** is defined in the **Infrastructure** project, which will be used for interacting with the PostgreSQL database.
 
 ## Data Access Approach
-The application's data access is conducted via:
-- **Entity Framework Core (EF Core)**: This is identified as the primary ORM used, referenced in the capabilities section with the source `Microsoft.EntityFrameworkCore`.
+The application employs **Entity Framework Core** for data access, as evidenced by the presence of the `Microsoft.EntityFrameworkCore` package in the **Infrastructure** and **Application** projects. This allows for an Object-Relational Mapping (ORM) approach for database operations.
 
 ## Entities / Domain Model
-The domain model of the application includes the following entities:
+The domain model is represented by two entities:
 - **TodoItem**
 - **TodoList**
 
-These entities are defined in the Domain project which is a part of the overall architecture.
+These entities are defined within the **Domain** project and encapsulate the core data structures used within the application.
 
 ## Caching
-No caching mechanisms were detected based on the provided metadata.
+None detected.
 
 ## Messaging & Queuing
 No message queue or event bus was detected in the current metadata.

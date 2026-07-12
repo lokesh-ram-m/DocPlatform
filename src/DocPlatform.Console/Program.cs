@@ -5,12 +5,16 @@ using DocPlatform.Core.Models;
 using DocPlatform.Infrastructure.Extraction;
 using DocPlatform.Infrastructure.Output;
 using DocPlatform.Infrastructure.Scanning;
+using DocPlatform.Infrastructure.Sourcing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 // ==========================================================================
-//  DocPlatform Console — the POC's "Analyze" trigger.
-//  User creates an application, selects repositories, clicks Analyze.
+//  DocPlatform Console
+//   - interactive:  dotnet run                    (prompt for app + repos)
+//   - headless/CI:  dotnet run -- --config apps.yml
 // ==========================================================================
 
 // --- Configuration ---
@@ -32,7 +36,6 @@ if (string.IsNullOrWhiteSpace(token))
 }
 
 // --- Dependency Injection (composition root) ---
-// Choose the extraction engine from config: "Roslyn" (accurate) or "Heuristic" (fast regex).
 string engine = config["Extraction:Engine"] ?? "Roslyn";
 
 var services = new ServiceCollection();
@@ -48,16 +51,25 @@ ServiceProvider provider = services.BuildServiceProvider();
 
 var orchestrator = provider.GetRequiredService<DocumentationOrchestrator>();
 
-// --- UI ---
+string repoRoot = FindRepoRoot() ?? Directory.GetCurrentDirectory();
+string outputDir = Path.Combine(repoRoot, config["Output:DocsFolder"] ?? "docs-site/docs");
+
+// --- Headless / CI mode (--config apps.yml) ---
+string? configPath = GetArg(args, "--config");
+if (configPath is not null)
+{
+    await RunHeadlessAsync(configPath, orchestrator, outputDir, repoRoot, engine);
+    return;
+}
+
+// --- Interactive mode ---
 Console.WriteLine("========================================");
 Console.WriteLine("  DocPlatform — AI Documentation (POC)");
 Console.WriteLine("========================================\n");
 
-// 1. Create an application
 Console.Write("Application name: ");
 string appName = ReadNonEmpty("TaskFlow");
 
-// 2. Select repositories
 Console.WriteLine("\nAdd repository paths (one per line, blank line to finish):");
 var repoPaths = new List<string>();
 while (true)
@@ -76,11 +88,6 @@ if (repoPaths.Count == 0)
     return;
 }
 
-// 3. Resolve output folder (Docusaurus docs)
-string repoRoot = FindRepoRoot() ?? Directory.GetCurrentDirectory();
-string outputDir = Path.Combine(repoRoot, config["Output:DocsFolder"] ?? "docs-site/docs");
-
-// 4. Analyze  (SCAN_ONLY env var = detection report without calling the AI)
 bool scanOnly = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SCAN_ONLY"));
 Console.WriteLine($"\n▶ Analyzing '{appName}' ({repoPaths.Count} repositories) — {engine} extractor{(scanOnly ? ", SCAN-ONLY" : "")}...\n");
 
@@ -93,6 +100,41 @@ if (!scanOnly)
 {
     Console.WriteLine($"\n   Docs written : {outputDir}");
     Console.WriteLine("   Next: run the Docusaurus site to browse the documentation.");
+}
+
+// ==========================================================================
+//  Helpers
+// ==========================================================================
+static async Task RunHeadlessAsync(string configPath, DocumentationOrchestrator orchestrator,
+    string outputDir, string repoRoot, string engine)
+{
+    if (!File.Exists(configPath))
+    {
+        Console.WriteLine($"❌ Config not found: {configPath}");
+        return;
+    }
+
+    IDeserializer deserializer = new DeserializerBuilder()
+        .WithNamingConvention(CamelCaseNamingConvention.Instance)
+        .IgnoreUnmatchedProperties()
+        .Build();
+    AppsConfig cfg = deserializer.Deserialize<AppsConfig>(File.ReadAllText(configPath)) ?? new AppsConfig();
+
+    string workDir = Path.Combine(repoRoot, ".sources");
+    Console.WriteLine($"Headless mode — {cfg.Applications.Count} application(s), {engine} extractor\n");
+
+    foreach (AppEntry appEntry in cfg.Applications)
+    {
+        Console.WriteLine($"▶ {appEntry.Name}");
+        var paths = new List<string>();
+        foreach (string repo in appEntry.Repos)
+            paths.Add(GitSourceResolver.Resolve(repo, workDir, msg => Console.WriteLine("  " + msg)));
+
+        await orchestrator.GenerateAsync(appEntry.Name, paths, outputDir, msg => Console.WriteLine("  " + msg));
+        Console.WriteLine($"  ✅ {appEntry.Name}\n");
+    }
+
+    Console.WriteLine($"All documentation written to {outputDir}");
 }
 
 static void PrintReport(ApplicationModel app)
@@ -119,7 +161,12 @@ static void PrintReport(ApplicationModel app)
         Console.WriteLine($"   {g.Key}: {string.Join(", ", g.Select(c => c.Name).Distinct())}");
 }
 
-// --- helpers ---
+static string? GetArg(string[] args, string name)
+{
+    int i = Array.IndexOf(args, name);
+    return i >= 0 && i + 1 < args.Length ? args[i + 1] : null;
+}
+
 static string ReadNonEmpty(string fallback)
 {
     string? v = Console.ReadLine();
@@ -136,8 +183,21 @@ static string? FindRepoRoot()
     var dir = new DirectoryInfo(AppContext.BaseDirectory);
     while (dir is not null)
     {
-        if (dir.GetFiles("DocPlatform.sln").Length > 0) return dir.FullName;
+        if (dir.GetFiles("*.sln").Length > 0 || dir.GetFiles("*.slnx").Length > 0 || dir.GetFiles("apps.yml").Length > 0)
+            return dir.FullName;
         dir = dir.Parent;
     }
     return null;
+}
+
+// Config model for apps.yml
+class AppsConfig
+{
+    public List<AppEntry> Applications { get; set; } = new();
+}
+
+class AppEntry
+{
+    public string Name { get; set; } = string.Empty;
+    public List<string> Repos { get; set; } = new();
 }

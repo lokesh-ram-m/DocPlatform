@@ -36,51 +36,64 @@ graph LR
 
 
 ## Detected Patterns
-The application appears to follow a **Layered Architecture** pattern, leveraging **Clean Architecture principles** based on interfaces, services, and references. It utilizes Dependency Injection (DI) throughout its components to manage dependencies effectively.
+The architecture of the CleanArchitecture application appears to be aligned with several established design patterns, including:
+- **Layered Architecture**: The separation of concerns is evident through the distinct layers of Domain, Application, Infrastructure, and Web projects.
+- **Dependency Injection**: The use of interfaces in the Application and Infrastructure layers implies Dependency Injection principles, promoting loose coupling among components.
+- **Clean Architecture**: The structure suggests a Clean Architecture approach based on interfaces and services, particularly with the presence of domain entities and their interaction through services.
 
 ## Solution Structure
+The CleanArchitecture application is composed of the following repositories and their projects, each with defined responsibilities:
 
-The application consists of several repositories and projects, each with specific responsibilities:
+1. **Domain**
+   - **Type**: DotNetLibrary
+   - **Responsibilities**: Contains the domain entities such as `TodoItem` and `TodoList`.
 
-- **Domain**: This project defines the core business entities, including `TodoItem` and `TodoList`. It plays a crucial role in encapsulating business logic and domain rules.
+2. **Infrastructure**
+   - **Type**: DotNetLibrary
+   - **Responsibilities**: Provides access to data through EF Core entities, includes the `ApplicationDbContext`, and implements the `IdentityService` for authentication.
 
-- **Infrastructure**: The Infrastructure project handles external resources and services. It contains the `ApplicationDbContext`, which persists data to a `PostgreSQL` database, and implements the `IdentityService` for managing authentication.
+3. **Application**
+   - **Type**: DotNetLibrary
+   - **Responsibilities**: Contains business logic, application services, and command/query handlers such as `CreateTodoItemCommand` and `GetTodosQuery`. It defines interfaces for services, including `IIdentityService`.
 
-- **Application**: This project acts as the mediator between the Domain and Infrastructure layers. It contains the configuration for CQRS (Command Query Responsibility Segregation) through commands such as `CreateTodoItemCommand` and queries like `GetTodosQuery`. Interfaces like `IApplicationDbContext` and `IIdentityService` are defined here for dependency injection.
+4. **Shared**
+   - **Type**: DotNetLibrary
+   - **Responsibilities**: A shared library without specific entities or services but can be utilized by other projects.
 
-- **Shared**: This project holds common utilities and shared components that can be used across other projects in the solution.
+5. **ServiceDefaults**
+   - **Type**: DotNetLibrary
+   - **Responsibilities**: Holds default services, potentially for configuration or service discovery.
 
-- **ServiceDefaults**: This project defines default service configurations, particularly for resilience and service discovery.
+6. **AppHost**
+   - **Type**: DotNetOther
+   - **Responsibilities**: Serves as the application host, dependent on Shared and Web projects.
 
-- **AppHost**: This component manages the application host context and depends on the Shared and Web projects for integration.
+7. **Web**
+   - **Type**: DotNetApi
+   - **Responsibilities**: Acts as the API layer, exposing endpoints related to TODO items, user management, and weather forecasts.
 
-- **Web**: The Web project serves as the API interface for the application, providing endpoints for managing todo items, user authentication, and retrieving weather forecasts via a minimal API design.
-
-- **Tests**: There are multiple test projects (e.g., `Domain.UnitTests`, `Application.FunctionalTests`, etc.) that are structured to test various layers and functionalities within the application.
-
-- **cleanarchitecture.web**: This is an Angular front-end client that interacts with the Web API, consisting of various components like `todo`, `weather`, and user authentication flows.
+8. **ClientApp (Angular)**
+   - **Type**: Angular
+   - **Responsibilities**: Frontend application managing routes and components for Todo, Weather, user login and registration.
 
 ## Component Responsibilities
-- **Domain**: Hosts business entities and domain logic.
-- **Infrastructure**: Manages data access and external dependencies like databases.
-- **Application**: Mediates commands and queries, encapsulating application logic.
-- **Shared**: Provides common libraries or utilities used across projects.
-- **ServiceDefaults**: Contains basic service configurations for external integrations.
-- **AppHost**: Sets up the application environment and manages dependencies.
-- **Web**: Exposes API endpoints for various functionalities.
-- **Tests**: Ensures functionality correctness and maintains quality through different testing strategies.
+- **Endpoints**: The Web project defines several minimal API endpoints, including:
+  - Todo Items (create, update, delete, fetch)
+  - Todo Lists (create, update, delete, fetch)
+  - User actions (logout)
+  - Weather forecasts (fetch)
+  
+- **Identity Services**: Managed by the Infrastructure project which includes the `IdentityService` for user authentication.
+
+- **Data Access**: Managed by the Infrastructure with persistence to PostgreSQL via EF Core, ensuring that data transactions are handled appropriately.
 
 ## How the Pieces Fit Together
-In the application architecture, the dependencies are structured as follows:
+The CleanArchitecture application functions through a series of dependencies and API calls as follows:
 
-1. The **Web** project interfaces with incoming HTTP requests. It depends on the **Application**, **Infrastructure**, and **ServiceDefaults** projects to execute business logic and access data.
-
-2. The **Application** project depends on the **Domain** project for domain entities and business rules. It also relies on **Infrastructure** to interact with external resources and data persistence mechanisms.
-
-3. The **Infrastructure** project depends on **Shared** for common utilities, and it directly interacts with a **PostgreSQL** database for data persistence.
-
-4. The **AppHost** integrates the **Shared** project and the **Web** project, ensuring that the application is properly configured and hosted.
-
-5. The **cleanarchitecture.web** Angular client calls the endpoints defined in the **Web API**, leading to actions that interact with commands and queries defined in the **Application** project.
-
-6. The testing projects (e.g., `TestAppHost`, `Application.UnitTests`, and others) depend on relevant subsets of the application components, including **Shared** and **Web**, to validate the functionality and correctness of individual parts and the overall application.
+1. The **Web** project acts as the front-facing API layer, depending on the **Application**, **Infrastructure**, and **ServiceDefaults** projects.
+2. The **Application** layer interacts with the **Domain** to manage business logic while depending on the **Infrastructure** for data access.
+3. The **Infrastructure** not only serves the **Application** for business functionalities but also persists data to the PostgreSQL database.
+4. The **AppHost** integrates both the **Shared** and **Web** components, functioning as a central entry point for the application.
+5. The **cleanarchitecture.web** Angular application connects to the **Web** API, issuing calls to endpoints provided by the Web project to perform various operations.
+  
+Through these relationships, components communicate effectively, ensuring a robust and maintainable application structure.

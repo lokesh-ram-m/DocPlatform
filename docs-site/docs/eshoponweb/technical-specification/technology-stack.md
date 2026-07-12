@@ -4,27 +4,18 @@ sidebar_position: 2
 
 # Technology Stack
 
-| Concern                  | Technology                    | Details                                                |
-|-------------------------|-------------------------------|--------------------------------------------------------|
-| Runtime & Frameworks    | .NET                          | Targeting .NET for building and running the application. |
-|                         | ASP.NET Core                  | Framework for building web applications and APIs.      |
-|                         | EF Core                       | Object-Relational Mapper (ORM) for data access.        |
-| Data Access             | Entity Framework Core         | Package used for database operations and migrations.    |
-| Database                | SQL Server                    | Database provider referenced for persistent storage.    |
-| Authentication          | ASP.NET Core Identity         | Provides functionalities for user management.           |
-|                         | JWT Authentication            | Framework for implementing JWT bearer token authentication. |
-| API Documentation       | OpenAPI / Swagger             | Tool for generating API documentation and UI, used via Swashbuckle. |
-| AI/LLM                 | No AI/LLM detected            | No AI or Large Language Model technology present.       |
-| Cross-Cutting Libraries  | AutoMapper                    | Mapping library for transferring data between objects.  |
-|                         | FluentValidation              | Library for model validation.                           |
-|                         | Ardalis.Specification         | Library for implementing specifications in EF Core.    |
-|                         | Ardalis.ApiEndpoints          | Simplifies the creation of minimal APIs.               |
-|                         | Microsoft.Extensions.Logging.Configuration | For logging configuration.                              |
-|                         | Microsoft.Extensions.Identity.Core  | Provides identity functionalities.                    |
-| Testing                 | xUnit                         | Testing framework used for unit and integration tests.  |
-|                         | Microsoft.AspNetCore.Mvc.Testing | Tools for testing ASP.NET Core applications.          |
-|                         | Microsoft.NET.Test.Sdk       | SDK for running tests in .NET applications.            |
-|                         | Coverlet                      | Code coverage library for .NET.                        |
-|                         | NSubstitute                   | Mocking library for unit tests.                        |
-
-This table outlines the primary technologies and frameworks used across different concerns within the application, derived strictly from the provided metadata.
+| Concern                | Technology                                          | Details                                                      |
+|-----------------------|----------------------------------------------------|--------------------------------------------------------------|
+| Runtime & Frameworks  | ASP.NET Core                                       | Main framework for building web applications.               |
+| Data Access           | Entity Framework Core (EF Core)                   | Used for data access and manipulation.                       |
+| Database              | SQL Server (EntityFrameworkCore.SqlServer)        | The primary database used for persistence.                  |
+| Database              | InMemory (EntityFrameworkCore.InMemory)            | Utilized for testing and development purposes.              |
+| Authentication        | ASP.NET Core Identity                              | Framework for managing user identities and authentication.   |
+| Authentication        | JWT Bearer Authentication                          | Mechanism for securing APIs through JSON Web Tokens (JWT).   |
+| API Documentation     | Swagger / Swashbuckle                             | Tools for generating interactive API documentation.         |
+| Web / API             | Microsoft.AspNetCore.Components.Authorization      | Provides authorization capabilities for web applications.     |
+| Data Access           | Ardalis Specification Entity Framework Core       | Provides specifications for data querying and access.       |
+| Mapping               | AutoMapper                                         | Used for object-to-object mapping, simplifying data transformations. |
+| Testing               | xUnit                                              | Framework for unit testing and integration testing.         |
+| Validation            | FluentValidation                                   | Library for validating data models and inputs.             |
+| Cloud                 | Azure SDK                                          | Tools for integrating with Azure services.                  |

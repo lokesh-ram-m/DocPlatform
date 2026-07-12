@@ -5,46 +5,44 @@ sidebar_position: 4
 # Data, Storage & Messaging
 
 ## Databases
-The application utilizes two database contexts:
-- **AppIdentityDbContext**: This context is likely designed to handle identity-related data, leveraging ASP.NET Core Identity.
-- **CatalogContext**: This context is likely used for managing catalog-related data.
+The application utilizes the following databases through Entity Framework Core:
 
-Both contexts are part of the **Infrastructure** project and are configured to support EF Core.
+- **AppIdentityDbContext**: This context is responsible for managing identity-related entities.
+- **CatalogContext**: This context manages catalog-related entities.
+
+Both contexts are established in the `Infrastructure` project, which depends on the `ApplicationCore` project for entity definitions.
 
 ## Data Access Approach
-The application employs **Entity Framework Core** (EF Core) for data access. This technology provides a robust framework for working with relational data and is included in the `Infrastructure` project through the `Ardalis.Specification.EntityFrameworkCore` package.
+The application employs **Entity Framework Core** as the data access approach, as indicated by the use of the library `Ardalis.Specification.EntityFrameworkCore`. This approach allows for the implementation of the Repository and Unit of Work patterns, simplifying the handling of data access logic.
 
 ## Entities / Domain Model
-The application defines a variety of entities within the **ApplicationCore** and **BlazorShared** projects. These include:
-- **ApplicationCore Entities**: 
-  - Address
-  - Basket
-  - BasketItem
-  - Buyer
-  - CatalogBrand
-  - CatalogItem
-  - CatalogItemDetails
-  - CatalogItemOrdered
-  - CatalogType
-  - Order
-  - OrderItem
-  - PaymentMethod
-- **BlazorShared Entities**:
-  - CatalogBrand
-  - CatalogItem
-  - CatalogType
-  - ErrorDetails
-  - LookupData
-- **UnitTests Entities**:
-  - BasketAddItem
-  - BasketRemoveEmptyItems
-  - BasketTotalItems
-  - OrderTotal
+The application includes the following entities defined in the `ApplicationCore` project:
 
-These entities represent core components of the application's domain model.
+- **Address**
+- **Basket**
+- **BasketItem**
+- **Buyer**
+- **CatalogBrand**
+- **CatalogItem**
+- **CatalogItemDetails**
+- **CatalogItemOrdered**
+- **CatalogType**
+- **Order**
+- **OrderItem**
+- **PaymentMethod**
+
+Additionally, the `BlazorShared` project includes:
+
+- **CatalogBrand**
+- **CatalogItem**
+- **CatalogType**
+- **ErrorDetails**
+- **LookupData**
+
+Entities like **BasketAddItem**, **BasketRemoveEmptyItems**, **BasketTotalItems**, and **OrderTotal** are defined in the `UnitTests` project, though they may serve specific testing purposes.
 
 ## Caching
-No caching mechanism was detected in the current metadata.
+None detected.
 
 ## Messaging & Queuing
 No message queue or event bus was detected in the current metadata.

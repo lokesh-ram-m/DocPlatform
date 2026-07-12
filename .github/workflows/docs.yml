@@ -1,0 +1,67 @@
+name: Generate & Publish Docs
+
+# CI/CD: on every push (or manually), regenerate the documentation and publish it.
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+# Permissions needed to deploy to GitHub Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one deploy at a time.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout DocPlatform
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 1. Run the tool headless — reads apps.yml, clones the repos, generates docs.
+      - name: Generate documentation
+        env:
+          Ai__GitHubToken: ${{ secrets.AI_TOKEN }}
+        run: dotnet run --project src/DocPlatform.Console -- --config apps.yml
+
+      # 2. Build the Docusaurus site (base URL scoped to the Pages project path).
+      - name: Build site
+        working-directory: docs-site
+        env:
+          DOCS_URL: https://${{ github.repository_owner }}.github.io
+          DOCS_BASE_URL: /${{ github.event.repository.name }}/
+        run: |
+          npm ci
+          npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs-site/build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

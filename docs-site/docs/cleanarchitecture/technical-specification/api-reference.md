@@ -5,41 +5,36 @@ sidebar_position: 6
 # API Reference
 
 ### EndpointRouteBuilderExtensions (Minimal API)
-Base Route: N/A  
-| Method | Action | Endpoint |
-|--------|--------|----------|
-| GET    | pattern | /{pattern} |
-| POST   | pattern | /{pattern} |
-| PUT    | pattern | /{pattern} |
-| PATCH  | pattern | /{pattern} |
-| DELETE | pattern | /{pattern} |
+| Method | Action      | Endpoint    |
+|--------|-------------|-------------|
+| GET    | pattern     | /           |
+| POST   | pattern     | /           |
+| PUT    | pattern     | /           |
+| PATCH  | pattern     | /           |
+| DELETE | pattern     | /           |
 
 ### TodoItems (Minimal API)
-Base Route: N/A  
-| Method | Action               | Endpoint       |
-|--------|---------------------|-----------------|
-| POST   | CreateTodoItem      | /TodoItems      |
-| PUT    | {id}                | /TodoItems/{id} |
-| PATCH  | UpdateDetail/{id}   | /TodoItems/UpdateDetail/{id} |
-| DELETE | {id}                | /TodoItems/{id} |
+| Method | Action             | Endpoint         |
+|--------|--------------------|------------------|
+| POST   | CreateTodoItem     | /todoitems       |
+| PUT    | {id}               | /todoitems/{id}  |
+| PATCH  | UpdateDetail/{id}  | /todoitems/{id}/details |
+| DELETE | {id}               | /todoitems/{id}  |
 
 ### Users (Minimal API)
-Base Route: N/A  
-| Method | Action | Endpoint   |
-|--------|--------|------------|
-| POST   | logout | /Users/logout |
+| Method | Action   | Endpoint     |
+|--------|----------|--------------|
+| POST   | logout   | /users/logout |
 
 ### WeatherForecasts (Minimal API)
-Base Route: N/A  
-| Method | Action               | Endpoint                  |
-|--------|---------------------|---------------------------|
-| GET    | GetWeatherForecasts  | /WeatherForecasts         |
+| Method | Action               | Endpoint                 |
+|--------|----------------------|--------------------------|
+| GET    | GetWeatherForecasts   | /weatherforecast         |
 
 ### TodoLists (Minimal API)
-Base Route: N/A  
-| Method | Action          | Endpoint       |
-|--------|----------------|-----------------|
-| GET    | GetTodoLists   | /TodoLists      |
-| POST   | CreateTodoList | /TodoLists      |
-| PUT    | {id}           | /TodoLists/{id} |
-| DELETE | {id}           | /TodoLists/{id} |
+| Method | Action           | Endpoint        |
+|--------|------------------|-----------------|
+| GET    | GetTodoLists     | /todolists      |
+| POST   | CreateTodoList   | /todolists      |
+| PUT    | {id}             | /todolists/{id} |
+| DELETE | {id}             | /todolists/{id} |

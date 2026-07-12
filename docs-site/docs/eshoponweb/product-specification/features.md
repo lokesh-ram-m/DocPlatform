@@ -2,33 +2,37 @@
 sidebar_position: 2
 ---
 
-# eShopOnWeb Features
+# eShopOnWeb Product Specification
+
+## Task Management
+- **Order Management**: Users can view their orders and details of specific orders, which helps them keep track of their purchases and order status. This enhances customer satisfaction by providing visibility and control over their orders.
+  
+- **Basket Management**: Users can manage their shopping basket, adding or removing items as needed. This function simplifies the online shopping experience, allowing users to curate their selections before purchase.
 
 ## User & Access Management
-- **Account Management:** Users can create and manage their accounts, including changing passwords and setting up two-factor authentication. This enhances security and provides control over personal information.
-- **Identity Verification:** The application facilitates account verification via email, aiding in user authentication and improving trust.
+- **User Account Management**: Users can create and manage their accounts, including changing passwords and enabling two-factor authentication. This increases security and gives users control over their personal data and account settings.
+
+- **Authentication**: The application uses JWT authentication for secure access to user accounts. This ensures that user data is protected and only accessible by authorized individuals.
 
 ## Catalog Management
-- **Product Browsing:** Users can view a list of catalog items, complete with details like brand and type. This feature simplifies the shopping experience by making it easy to find products.
-- **Product Search and Filtering:** Users have the capability to search and filter catalog items based on different criteria, enhancing the discoverability of products tailored to their needs.
-- **Product Updates:** Administrators can create, update, and delete catalog items through a dedicated interface, ensuring the catalog remains current and relevant.
+- **Catalog Browsing**: Users can browse through a catalog of items, including brands and item types. This capability allows users to easily find products they are interested in, enhancing the shopping experience.
 
-## Shopping Cart Management
-- **Cart Management:** Users can add items to their shopping carts, view the cart, and remove items as needed. This functionality allows for a personalized shopping experience.
-- **Total Calculation:** The application calculates totals for items in the cart automatically, helping users understand their spending at a glance.
+- **Catalog Item Details**: Users can view detailed information about specific catalog items, aiding informed purchasing decisions and ensuring a high level of product awareness.
 
-## Order Management
-- **Order Tracking:** Users can view and track their orders, providing transparency in the purchasing process and enhancing customer satisfaction.
-- **Order History:** Users are able to access their order history, which simplifies repeat purchasing and helps users keep track of their past transactions.
+- **Catalog Item Creation, Update, and Deletion**: Administrators can create, update, or delete catalog items. This feature provides flexibility and control over the inventory, ensuring that the product listings are current and relevant.
 
 ## API Documentation
-- **User-Friendly API Documentation:** Built-in Swagger documentation enables users and developers to understand and interact with the API seamlessly, promoting easier integration and use.
+- **OpenAPI/Swagger**: The application provides API documentation through Swagger. This feature allows developers to easily understand and integrate with the application's API, promoting better collaboration and understanding between technical and non-technical stakeholders.
 
-## Testing & Quality Assurance
-- **Automated Testing:** The application employs xUnit for automated testing, ensuring that features work as intended, thus maintaining high-quality standards in performance and reliability.
+## Security & Compliance
+- **Identity Management**: The application utilizes ASP.NET Core Identity for user management. This capability secures user data and provides features such as user roles and claims, assisting in managing access and permissions effectively.
 
-## Security Features
-- **Authentication:** The application utilizes JWT Bearer authentication, providing a secure way to validate user identity and protect user data.
-- **Access Control:** With the use of ASP.NET Core Identity, the application manages user roles and access levels, thus safeguarding sensitive operations and information. 
+## Testing and Quality Assurance
+- **Automated Testing**: Integration and unit tests are implemented to ensure code quality and behavior consistency. This capability helps maintain the application's reliability and minimizes the risk of defects in production. 
 
-By leveraging these capabilities, eShopOnWeb provides a comprehensive solution for users looking for an efficient and secure online shopping experience.
+## Mapping and Data Access
+- **AutoMapper**: The application employs AutoMapper for object-object mapping, improving efficiency when handling data transfer objects and enhancing code maintainability.
+
+- **Entity Framework Core**: The application uses Entity Framework Core for data access, ensuring reliable and efficient database interactions. This capability simplifies CRUD operations and enhances database management.
+
+These capabilities collectively create a robust platform for users to manage online shopping experiences efficiently, ensuring both ease of use and high levels of security and responsiveness.

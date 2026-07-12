@@ -5,24 +5,13 @@ sidebar_position: 3
 # Infrastructure & Cloud
 
 ## Hosting & Runtime
-The **eShopOnWeb** application comprises several projects, each serving distinct roles:
-
-- **BlazorAdmin**: This is a .NET API project that runs as an ASP.NET Core service.
-- **Infrastructure**: A .NET Library that aggregates shared utilities and services needed across the application.
-- **PublicApi**: Also a .NET API project, this project implements a Minimal API structure in ASP.NET Core, allowing for streamlined interaction with its endpoints.
-- **ApplicationCore**: A .NET Library housing the core business logic and entities.
-- **BlazorShared**: A .NET Library shared between the Blazor components and the main application logic.
-- **Web**: This is another .NET API project implementing the server-side functionalities for the web application.
-
-The entire architecture is containerizable, allowing for deployment in various hosting environments, though specific hosting services are not detailed in the metadata.
+The application **eShopOnWeb** is primarily built using **ASP.NET Core** technologies. It consists of multiple projects including **BlazorAdmin**, **Web**, **PublicApi**, and various libraries to support backend functionalities like **Infrastructure** and **ApplicationCore**. The architecture allows for **containerization**, making it suitable for deployment in various hosting environments. The components are designed to run as a centralized API service with a client-side Angular Single Page Application (SPA) through projects like **BlazorAdmin**.
 
 ## Cloud Services
-The application demonstrates capabilities associated with cloud services through the Azure SDK (`Microsoft.VisualStudio.Azure.Containers.Tools.Targets`). However, there are no specific cloud services or platforms explicitly mentioned within the metadata. This indicates that the application is host-agnostic and is designed to be containerizable.
+The metadata indicates the presence of the **Azure SDK** associated with **Microsoft.VisualStudio.Azure.Containers.Tools.Targets**, signaling some capability to interact with Azure services. However, no specific cloud services (such as storage, databases, or computation) are explicitly detected from the provided metadata. Thus, the application architecture remains **host-agnostic/containerizable** and can be hosted on other cloud platforms or on-premises environments without dependency on a specific cloud infrastructure.
 
 ## Configuration
-Configuration sources indicate the presence of various application settings likely managed through `appsettings.json` files and environment variables, although specific configurations are not detailed in the provided metadata.
+Configuration sources for the application may include standard ASP.NET Core options such as **appsettings.json** and environment variables. However, the metadata does not provide explicit details on these configuration sources; therefore, the specifics of configuration management are not documented.
 
 ## Deployment Considerations
-Deployment considerations are derived from architecture and dependencies detected in the metadata. The application employs multiple projects that depend on one another, highlighting a layered architecture. Each component is designed to be loosely coupled, which eases the deployment process.
-
-The use of ASP.NET Core Identity for authentication implies that secure deployment practices will be necessary. Additionally, certain projects reference SQL Server and Entity Framework Core, suggesting that database migration and initialization might be required during deployment. Nevertheless, detailed deployment mechanisms (such as CI/CD setups) are not provided in the metadata.
+Deployment strategies are not explicitly outlined in the metadata; however, the application can be expected to follow standard practices associated with deploying ASP.NET Core applications. This likely includes the use of containerization (e.g., Docker) given the referenced **Azure SDK**, and typical deployment pipelines could utilize CI/CD practices in cloud services or other container orchestration platforms. Furthermore, the authentication mechanism is set up via **ASP.NET Core Identity** and **JWT Bearer token authentication**, which should be considered during deployment for secure access management.

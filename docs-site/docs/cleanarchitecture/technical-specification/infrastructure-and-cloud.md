@@ -5,30 +5,17 @@ sidebar_position: 3
 # Infrastructure & Cloud
 
 ## Hosting & Runtime
-The application consists of multiple components that are designed to run in a .NET environment. The key components include:
-
-- **ASP.NET Core Services**: The main web API is implemented using ASP.NET Core, specifically with the `Web` project which handles incoming HTTP requests routed through minimal APIs.
-- **Angular SPA**: The client-side is built as a Single Page Application (SPA) using Angular. The Angular project (`cleanarchitecture.web`) hosts various components and routes for user interaction.
-- **Containerizable**: The application is structured in a way that allows for containerization, facilitating deployment in cloud environments or on-premises.
+The application is built on the ASP.NET Core framework and features a .NET library architecture that includes multiple projects such as `Domain`, `Infrastructure`, `Application`, and `Web`. The `Web` project includes APIs implemented as Minimal APIs, allowing streamlined endpoints for interfacing with its functionalities (e.g., managing todo items and retrieving weather forecasts). Additionally, there is an Angular single-page application (SPA) that serves as the client-side interface, which is containerizable.
 
 ## Cloud Services
 Detected cloud capabilities include:
-- **Azure SDK**: The application has integrated support for Azure services through `Aspire.Hosting.Azure.AppContainers`. 
+- Azure SDK via `Aspire.Hosting.Azure.AppContainers`, which suggests potential deployment capabilities to Azure cloud environments.
+- Azure PostgreSQL as a managed database service, indicating support for PostgreSQL databases hosted in Azure.
 
-No other specific cloud services were detected. The application's architecture appears to be host-agnostic and can run in a variety of environments due to its containerizable nature.
+However, explicit instances of cloud services are not detailed, and overall, the application remains host-agnostic and can be containerized.
 
 ## Configuration
-Configuration sources available in the application include:
-- **Environment Variables**: These are likely utilized to manage different app settings across various environments.
-- **appsettings.json**: Not explicitly mentioned in the metadata, but commonly used with .NET applications for configuration management.
-
-There are no specific details on configuration sources beyond indicating the use of standard practices common in .NET applications.
+Configuration sources are not explicitly detailed in the metadata. However, standard practices for .NET applications suggest that configuration settings can likely be sourced from `appsettings.json` files and environment variables based on the ASP.NET Core configuration paradigm. Additional configuration may be integrated through Azure services as part of the detected Azure capabilities.
 
 ## Deployment Considerations
-The application likely supports various deployment scenarios considering its modular design and support for containerization. However, details on specific deployment methods (e.g., CI/CD pipelines, Azure App Services deployment specifics) were not found in the metadata.
-
-It can be inferred that:
-- The application can be hosted in Azure or any other compliant environment that supports ASP.NET Core and containers.
-- The deployment may need to involve setting up database connections according to the detected PostgreSQL capabilities.
-
-Additional operational concerns, such as scaling and monitoring, would depend on the specific hosting environment and configurations chosen during deployment.
+Deployment strategies are likely flexible due to the containerizable architecture. There is a reliance on a standard web hosting approach in combination with Azure cloud capabilities for ease of deployment. The specific deployment details and environments, both for development and production, have not been explicitly detailed in the available metadata. Thus, specifics regarding CI/CD pipelines or container orchestration (e.g., Kubernetes, Docker Swarm) are not covered and remain unspecified.
