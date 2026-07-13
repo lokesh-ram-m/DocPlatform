@@ -9,4 +9,5 @@ sidebar_position: 0
 AI-generated Product & Technical specifications for the following applications:
 
 - **[CleanArchitecture](/cleanarchitecture/product-specification/overview)** — Product & Technical specs
+- **[eShop](/eshop/product-specification/overview)** — Product & Technical specs
 - **[eShopOnWeb](/eshoponweb/product-specification/overview)** — Product & Technical specs
