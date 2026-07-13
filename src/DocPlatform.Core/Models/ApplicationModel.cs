@@ -36,6 +36,17 @@ public class RepositoryModel
     public bool HasReadme { get; set; }
 
     public List<ProjectModel> Projects { get; set; } = new();
+
+    // Projects detected but not yet supported (React, Python, Java, …). Recorded and
+    // logged rather than treated as errors; a future language extractor would claim these.
+    public List<SkippedProject> SkippedProjects { get; set; } = new();
+}
+
+public class SkippedProject
+{
+    public string Name { get; set; } = string.Empty;
+    public string Type { get; set; } = string.Empty;   // e.g. "React", "Python", "Java (Maven)"
+    public string Path { get; set; } = string.Empty;
 }
 
 public enum ProjectKind

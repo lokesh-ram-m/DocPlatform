@@ -80,6 +80,8 @@ public class GitHubModelsProvider : IAIProvider
         technologies = app.Technologies,
         capabilities = app.Capabilities.Select(c => new { c.Category, c.Name }),
         architecturePatterns = app.ArchitecturePatterns.Select(p => new { p.Name, p.Evidence }),
+        // Components present but not analyzed (React/Python/Java/...) — mention as detected-but-unanalyzed.
+        unanalyzedComponents = app.Repositories.SelectMany(r => r.SkippedProjects).Select(s => new { s.Name, s.Type }),
         relationships = app.Relationships.Select(r => new { r.From, r.To, r.Type }),
         callGraph = app.CallGraph.Take(60).Select(r => new { r.From, r.To }),
         repositories = app.Repositories.Select(repo => new

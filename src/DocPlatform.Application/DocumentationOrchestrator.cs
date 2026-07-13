@@ -41,6 +41,8 @@ public class DocumentationOrchestrator
             _extractor.Extract(repo);
             application.Repositories.Add(repo);
             log($"  found {repo.Projects.Count} project(s)");
+            foreach (SkippedProject skipped in repo.SkippedProjects)
+                log($"  skipped (unsupported): {skipped.Name} [{skipped.Type}]");
         }
         application.Technologies = TechnologyAggregator.From(application);
         application.Capabilities = CapabilityClassifier.Classify(application);

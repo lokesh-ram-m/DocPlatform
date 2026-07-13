@@ -159,6 +159,14 @@ static void PrintReport(ApplicationModel app)
             if (p.Angular is not null)  Console.WriteLine($"        angular:     {p.Angular.Components.Count} components, {p.Angular.Routes.Count} routes");
         }
     }
+    List<SkippedProject> skipped = app.Repositories.SelectMany(r => r.SkippedProjects).ToList();
+    if (skipped.Count > 0)
+    {
+        Console.WriteLine("Skipped (unsupported — logged, not analyzed):");
+        foreach (SkippedProject s in skipped)
+            Console.WriteLine($"   {s.Name} [{s.Type}]");
+    }
+
     Console.WriteLine($"\nTechnologies: {string.Join(", ", app.Technologies)}");
     Console.WriteLine("Capabilities:");
     foreach (IGrouping<string, DetectedCapability> g in app.Capabilities.GroupBy(c => c.Category))
