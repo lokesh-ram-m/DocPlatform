@@ -164,6 +164,18 @@ static void PrintReport(ApplicationModel app)
     foreach (IGrouping<string, DetectedCapability> g in app.Capabilities.GroupBy(c => c.Category))
         Console.WriteLine($"   {g.Key}: {string.Join(", ", g.Select(c => c.Name).Distinct())}");
 
+    List<ProjectModel> all = app.Repositories.SelectMany(r => r.Projects).ToList();
+    List<string> schemes = all.SelectMany(p => p.AuthSchemes).Distinct().ToList();
+    List<string> policies = all.SelectMany(p => p.AuthPolicies).Distinct().ToList();
+    List<string> roles = all.SelectMany(p => p.AuthRoles).Distinct().ToList();
+    if (schemes.Count > 0 || policies.Count > 0 || roles.Count > 0)
+    {
+        Console.WriteLine("Auth:");
+        if (schemes.Count > 0)  Console.WriteLine($"   schemes:  {string.Join(", ", schemes)}");
+        if (policies.Count > 0) Console.WriteLine($"   policies: {string.Join(", ", policies)}");
+        if (roles.Count > 0)    Console.WriteLine($"   roles:    {string.Join(", ", roles)}");
+    }
+
     if (app.ArchitecturePatterns.Count > 0)
     {
         Console.WriteLine("Architecture patterns:");

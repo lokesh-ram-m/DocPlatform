@@ -66,6 +66,11 @@ public class ProjectModel
     public List<string> CqrsRequests { get; set; } = new();   // MediatR commands/queries
     public bool HasAuthentication { get; set; }
 
+    // Authentication & authorization detail.
+    public List<string> AuthSchemes { get; set; } = new();    // JWT Bearer, Cookie, OIDC, Identity, …
+    public List<string> AuthPolicies { get; set; } = new();   // named authorization policies (AddPolicy)
+    public List<string> AuthRoles { get; set; } = new();      // roles referenced in [Authorize(Roles=…)]
+
     // interface -> implementation, from DI registrations (AddScoped/Singleton/Transient).
     public Dictionary<string, string> ServiceImplementations { get; set; } = new();
 
@@ -81,6 +86,9 @@ public class ControllerModel
     public string Name { get; set; } = string.Empty;
     public string? Route { get; set; }
     public List<string> Actions { get; set; } = new();
+
+    // Controller-level authorization, e.g. "Authorize", "Authorize (Roles: Admin)", "AllowAnonymous".
+    public string? Authorization { get; set; }
 }
 
 public class AngularInfo

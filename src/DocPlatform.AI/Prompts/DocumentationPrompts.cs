@@ -79,9 +79,11 @@ public static class DocumentationPrompts
 
         yield return new(TechnicalGroup, "security-and-authentication.md", 5,
             "# Security & Authentication\n" +
-            "Sections: ## Authentication (mechanism from capabilities/HasAuthentication, e.g. JWT Bearer). " +
-            "## Authorization (note if controllers are protected). ## Secret & Password Handling (e.g. BCrypt if detected). " +
-            "## Security-relevant Libraries. If minimal, say so plainly." + meta);
+            "Sections: ## Authentication — the scheme(s) from `authSchemes` (e.g. JWT Bearer, Cookie, OpenID Connect, ASP.NET Core Identity). " +
+            "## Authorization — the named policies (`authPolicies`), roles (`authRoles`), and which controllers are protected " +
+            "(from each controller's `authorization` field: Authorize / AllowAnonymous). " +
+            "## Secret & Password Handling (e.g. BCrypt if detected in capabilities). " +
+            "## Security-relevant Libraries. If a concern is absent, say so plainly." + meta);
 
         yield return new(TechnicalGroup, "api-reference.md", 6,
             "# API Reference\n" +

@@ -28,7 +28,8 @@ public sealed class ControllerAnalyzer : IProjectAnalyzer
                 var controller = new ControllerModel
                 {
                     Name = name,
-                    Route = RouteResolver.ForController(name, controllerTemplate, null, string.Empty)
+                    Route = RouteResolver.ForController(name, controllerTemplate, null, string.Empty),
+                    Authorization = ReadAuthorization(cls.AttributeLists)
                 };
 
                 foreach (MethodDeclarationSyntax method in cls.Members.OfType<MethodDeclarationSyntax>())
@@ -46,6 +47,28 @@ public sealed class ControllerAnalyzer : IProjectAnalyzer
 
             AnalyzeMinimalApis(file, context.Project);
         }
+    }
+
+    // Controller-level authorization: "AllowAnonymous", "Authorize", or "Authorize (Roles: …)".
+    private static string? ReadAuthorization(SyntaxList<AttributeListSyntax> lists)
+    {
+        List<AttributeSyntax> attrs = lists.SelectMany(l => l.Attributes).ToList();
+
+        if (attrs.Any(a => RoslynSyntax.LastSegment(a.Name.ToString()) == "AllowAnonymous"))
+            return "AllowAnonymous";
+
+        AttributeSyntax? auth = attrs.FirstOrDefault(a => RoslynSyntax.LastSegment(a.Name.ToString()) == "Authorize");
+        if (auth is null) return null;
+
+        var details = new List<string>();
+        foreach (AttributeArgumentSyntax arg in auth.ArgumentList?.Arguments ?? default)
+        {
+            if (arg.Expression is not LiteralExpressionSyntax lit || lit.Token.Value is not string val) continue;
+            string? nm = arg.NameEquals?.Name.Identifier.Text;
+            if (nm == "Roles") details.Add($"Roles: {val}");
+            else if (nm == "Policy" || nm is null) details.Add($"Policy: {val}");
+        }
+        return details.Count > 0 ? $"Authorize ({string.Join(", ", details)})" : "Authorize";
     }
 
     private static void AnalyzeMinimalApis(AnalyzedFile file, ProjectModel project)
