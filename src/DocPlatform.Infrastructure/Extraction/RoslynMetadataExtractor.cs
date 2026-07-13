@@ -68,12 +68,20 @@ public class RoslynMetadataExtractor : IMetadataExtractor
 
                 if (name.EndsWith("Controller") || baseTypes.Any(b => b is "ControllerBase" or "Controller"))
                 {
-                    var controller = new ControllerModel { Name = name, Route = FirstStringArg(cls.AttributeLists, "Route") };
+                    string? controllerTemplate = FirstStringArg(cls.AttributeLists, "Route");
+                    var controller = new ControllerModel
+                    {
+                        Name = name,
+                        Route = RouteResolver.ForController(name, controllerTemplate, null, string.Empty)
+                    };
                     foreach (MethodDeclarationSyntax method in cls.Members.OfType<MethodDeclarationSyntax>())
                     {
                         if (!method.Modifiers.Any(SyntaxKind.PublicKeyword)) continue;
-                        string? verb = HttpVerb(method.AttributeLists);
-                        if (verb is not null) controller.Actions.Add($"{verb} {method.Identifier.Text}");
+                        (string? verb, string? actionTemplate) = HttpVerbAndTemplate(method.AttributeLists);
+                        if (verb is null) continue;
+                        actionTemplate ??= FirstStringArg(method.AttributeLists, "Route");   // [Route] on the action
+                        string path = RouteResolver.ForController(name, controllerTemplate, actionTemplate, method.Identifier.Text);
+                        controller.Actions.Add($"{verb} {path}");
                     }
                     project.Controllers.Add(controller);
                 }
@@ -96,23 +104,29 @@ public class RoslynMetadataExtractor : IMetadataExtractor
 
     private static void ExtractMinimalApis(SyntaxNode root, string file, ProjectModel project)
     {
-        var endpoints = new List<string>();
-        string? groupRoute = null;
+        // Collect the MapGroup prefixes in the file and join them as a base path.
+        // TODO: full nested-group resolution needs data-flow analysis of the group variables;
+        //       this best-effort join is correct for the common single-group-per-file pattern.
+        var groupPrefixes = new List<string>();
+        foreach (InvocationExpressionSyntax inv in root.DescendantNodes().OfType<InvocationExpressionSyntax>())
+            if (inv.Expression is MemberAccessExpressionSyntax { Name.Identifier.Text: "MapGroup" }
+                && FirstStringLiteral(inv.ArgumentList) is string g)
+                groupPrefixes.Add(g);
 
+        // Distinct: files often declare the same group prefix multiple times (e.g. per API
+        // version) — joining duplicates would wrongly repeat the prefix.
+        string prefix = RouteResolver.Combine(groupPrefixes.Distinct(StringComparer.OrdinalIgnoreCase).ToArray());
+
+        var endpoints = new List<string>();
         foreach (InvocationExpressionSyntax inv in root.DescendantNodes().OfType<InvocationExpressionSyntax>())
         {
             if (inv.Expression is not MemberAccessExpressionSyntax ma) continue;
             string m = ma.Name.Identifier.Text;
+            if (!HttpMaps.Contains(m)) continue;
 
-            if (HttpMaps.Contains(m))
-            {
-                string label = FirstStringLiteral(inv.ArgumentList) ?? FirstArgText(inv.ArgumentList) ?? "";
-                endpoints.Add($"{m[3..].ToUpper()} {label}".Trim());
-            }
-            else if (m == "MapGroup")
-            {
-                groupRoute ??= FirstStringLiteral(inv.ArgumentList);
-            }
+            string? path = FirstStringLiteral(inv.ArgumentList);              // the endpoint's own route
+            string full = RouteResolver.Combine(prefix, path ?? string.Empty);
+            endpoints.Add($"{m[3..].ToUpper()} {full}");
         }
 
         if (endpoints.Count > 0)
@@ -120,9 +134,9 @@ public class RoslynMetadataExtractor : IMetadataExtractor
             var controller = new ControllerModel
             {
                 Name = Path.GetFileNameWithoutExtension(file) + " (Minimal API)",
-                Route = groupRoute
+                Route = string.IsNullOrEmpty(prefix) ? null : prefix
             };
-            controller.Actions.AddRange(endpoints);
+            controller.Actions.AddRange(endpoints.Distinct());   // same route can be mapped per API version
             project.Controllers.Add(controller);
         }
     }
@@ -141,14 +155,22 @@ public class RoslynMetadataExtractor : IMetadataExtractor
         return null;
     }
 
-    private static string? HttpVerb(SyntaxList<AttributeListSyntax> lists)
+    // Returns the HTTP verb and the optional route template from an [Http*("template")] attribute.
+    private static (string? Verb, string? Template) HttpVerbAndTemplate(SyntaxList<AttributeListSyntax> lists)
     {
         foreach (AttributeSyntax a in lists.SelectMany(l => l.Attributes))
         {
             string n = LastSegment(a.Name.ToString());
-            if (n.StartsWith("Http") && n.Length > 4) return n[4..].ToUpper();
+            if (n.StartsWith("Http") && n.Length > 4)
+            {
+                string? template = null;
+                if (a.ArgumentList?.Arguments.FirstOrDefault()?.Expression is LiteralExpressionSyntax lit
+                    && lit.Token.Value is string s)
+                    template = s;
+                return (n[4..].ToUpper(), template);
+            }
         }
-        return null;
+        return (null, null);
     }
 
     private static string? FirstStringLiteral(ArgumentListSyntax? args)
@@ -158,9 +180,6 @@ public class RoslynMetadataExtractor : IMetadataExtractor
                 return s;
         return null;
     }
-
-    private static string? FirstArgText(ArgumentListSyntax? args) =>
-        args?.Arguments.FirstOrDefault()?.Expression.ToString();
 
     // "IdentityDbContext<AppUser, Role, string>" -> "IdentityDbContext";  "A.B.DbContext" -> "DbContext"
     private static string NormalizeBase(string typeName)
