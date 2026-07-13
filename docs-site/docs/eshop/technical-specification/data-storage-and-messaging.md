@@ -5,36 +5,57 @@ sidebar_position: 4
 # Data, Storage & Messaging
 
 ## Databases
-The application utilizes **PostgreSQL** as its database management system. The following components persist data to PostgreSQL:
-- Webhooks.API
-- Catalog.API
-- Identity.API
-- Ordering.Infrastructure
+The application uses **PostgreSQL** as its database system. The following DbContexts manage the database interactions:
+- **WebhooksContext**
+- **CatalogContext**
+- **ApplicationDbContext**
+- **OrderingContext**
+
+These contexts define how entities are mapped and how data is managed within the application.
 
 ## Data Access Approach
-The application primarily employs **Entity Framework Core (EF Core)** for data access.
+The application employs **Entity Framework Core** for data access. This ORM (Object-Relational Mapping) framework facilitates database operations and enables developers to interact with the database using .NET objects rather than raw SQL queries.
 
 ## Entities / Domain Model
-The application defines the following domain model entities:
-- **Identity.API**: 
-  - `ApplicationUser`
-  - `ConsentInputModel`
-- **Ordering.API**:
-  - `BasketItem`
-  - `CustomerBasket`
-  
-No additional entities are defined in other components.
+The application consists of the following entities that represent its domain model:
+- **WebhookSubscription**
+- **CatalogBrand**
+- **CatalogItem**
+- **CatalogType**
+- **Buyer**
+- **Order**
+- **OrderItem**
+- **PaymentMethod**
+- **ApplicationUser**
+- **ConsentInputModel**
+- **CardType**
+- **BasketItem**
+- **CustomerBasket**
+- **Address**
+- **Campaign**
+- **CampaignItem**
+- **CampaignRoot**
+- **CatalogRoot**
+- **GeolocationException**
+- **Location**
+- **LogoutParameter**
+- **OrderCheckout**
+- **PaymentInfo**
+- **Position**
+- **TabParameter**
+- **UserInfo**
+- **UserToken**
+- **BuyerAggregateTest**
+- **ComplexObject**
+- **OrderAggregateTest**
+- **ValueObjectA**
+- **ValueObjectB**
+- **ValueObjectTests**
+
+These entities encapsulate the data and business logic associated with the application.
 
 ## Caching
-**Redis** caching technology has been detected. 
+**Redis** is utilized for caching within the application. This technology helps improve performance by temporarily storing data in memory, reducing the need for repeated database queries.
 
 ## Messaging & Queuing
-The application utilizes **RabbitMQ** as its messaging system. Several components depend on RabbitMQ:
-- Webhooks.API
-- Catalog.API
-- Ordering.API
-- PaymentProcessor
-- Basket.API
-- EventBus
-
-Additionally, the **EventBus** library offers interfaces indicating its role in event handling within the architecture.
+The application employs **RabbitMQ** for messaging and queuing tasks. This message broker facilitates communication between different services within the application by allowing them to send and receive messages asynchronously.

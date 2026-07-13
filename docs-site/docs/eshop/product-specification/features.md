@@ -4,35 +4,86 @@ sidebar_position: 2
 
 # eShop Product Specification
 
-## Task Management
-- **Order Management**: Users can create, view, modify, and cancel orders. This capability helps streamline the purchasing process, allowing users to manage their transactions efficiently.
-- **Order Status Tracking**: Users can track the status of their orders. This keeps users informed about the progress of their purchases, enhancing transparency and trust.
+## Functional Areas
 
-## Catalog Management
-- **Product Search and Filtering**: Users can search for products by various criteria, including type and brand. This functionality improves user experience by allowing quick access to desired items.
-- **Product Information Updates**: Users can add, modify, or remove products in the catalog. This allows businesses to keep their product offerings current and relevant.
+### AI / Machine Learning
+- **Azure AI**
+  - **Capability**: Integrates with Azure AI to provide intelligent features and insights.
+  - **Benefits**: Helps users harness the power of AI for better decision making and improved user experiences.
 
-## User & Access Management
-- **User Authentication**: Users can log in and manage their accounts using secure authentication methods. This enhances security and gives users control over their personal information.
-- **User Role Management**: Administrators can manage user roles and permissions, enabling a secure environment tailored to business needs.
+- **OpenAI / GitHub Models**
+  - **Capability**: Utilizes state-of-the-art language models from OpenAI and GitHub.
+  - **Benefits**: Enables users to leverage advanced AI functionalities, such as natural language processing, for enhancing interactions and automating tasks.
 
-## Notification System
-- **Webhooks for Real-Time Updates**: The system can send webhooks to notify users of significant events, such as order status changes. This enhances user engagement by providing timely updates.
+### Authentication
+- **ASP.NET Core Identity**
+  - **Capability**: Manages user identities and authentication workflows.
+  - **Benefits**: Provides a secure way for users to manage their accounts, ensuring control over their personal information.
 
-## Data Management
-- **Entity Framework for Data Access**: The application uses Entity Framework Core, allowing seamless interaction with the PostgreSQL database. This promotes efficient data management and retrieval, ensuring users have access to accurate information.
+- **JWT Bearer Authentication**
+  - **Capability**: Offers token-based authentication for secure session management.
+  - **Benefits**: Simplifies the authentication process while enhancing security, making it easier for users to safely access their accounts.
 
-## AI Capabilities
-- **Integration with Azure AI and OpenAI**: The application can leverage AI capabilities to enhance functionality, such as improving product recommendations and providing customer support. This adds value through personalized user experiences.
+- **OpenID Connect**
+  - **Capability**: Supports OpenID Connect for single sign-on capabilities.
+  - **Benefits**: Allows users to login conveniently with existing credentials from trusted identity providers, streamlining the login experience.
 
-## Caching and Performance Optimization
-- **Redis Caching**: The application utilizes Redis for caching frequently accessed data. This improves performance by reducing load times, thereby enhancing user satisfaction.
+### Data Management
+- **Entity Framework Core**
+  - **Capability**: Facilitates data access and management through a robust ORM framework.
+  - **Benefits**: Simplifies database interactions for users by allowing them to focus on their data rather than the intricacies of database queries.
 
-## API Documentation
-- **OpenAPI Support**: The application has integrated OpenAPI documentation, making it easier for developers to understand and utilize the available APIs. This promotes accessibility and accelerates integration processes for third-party services.
+- **PostgreSQL**
+  - **Capability**: Utilizes PostgreSQL as the underlying database for data storage.
+  - **Benefits**: Ensures a reliable and scalable data management solution, allowing users to confidently store and retrieve their information.
 
-## Payment Processing
-- **Order Payment Management**: Users can manage payments for their orders, facilitating a seamless checkout experience. This is crucial for driving conversions and ensuring customer satisfaction.
+### Caching
+- **Redis**
+  - **Capability**: Implements caching mechanisms to enhance performance.
+  - **Benefits**: Reduces latency and improves load times, providing a smoother experience for users.
 
-## Testing and Quality Assurance
-- **Automated Testing**: The application uses xUnit for testing, ensuring that all features function as intended before deployment. This guarantees a higher quality product, reducing potential issues for users post-release.
+### Messaging
+- **RabbitMQ**
+  - **Capability**: Supports message queuing for inter-component communication.
+  - **Benefits**: Enhances system reliability and scalability, ensuring that users have a consistent experience even during high load periods.
+
+### API Management
+- **OpenAPI**
+  - **Capability**: Provides API documentation through OpenAPI specifications.
+  - **Benefits**: Eases the integration process for developers, allowing them to understand and leverage the API efficiently, enhancing the overall user experience.
+
+### Testing and Validation
+- **xUnit**
+  - **Capability**: Implements testing frameworks for ensuring software quality and reliability.
+  - **Benefits**: Ensures that users benefit from a dependable application, minimizing bugs and enhancing performance.
+
+- **FluentValidation**
+  - **Capability**: Offers validation capabilities for user inputs and data.
+  - **Benefits**: Improves data integrity and user interactions by ensuring that only valid data is processed.
+
+### Web Development
+- **ASP.NET Core**
+  - **Capability**: Serves as the framework for building web applications and APIs.
+  - **Benefits**: Enables robust and scalable web applications, providing users with a modern and responsive interface for their activities. 
+
+### Webhooks
+- **Webhook Subscription Management**
+  - **Capability**: Allows users to subscribe to and manage webhooks for real-time updates.
+  - **Benefits**: Keeps users informed about important events and changes in the system, enhancing engagement and responsiveness.
+
+### Catalog Management
+- **Product Catalog**
+  - **Capability**: Manages a catalog of items, including categories, brands, and types.
+  - **Benefits**: Provides users with organized access to products, streamlining the shopping experience.
+
+### Order Processing
+- **Order Management**
+  - **Capability**: Facilitates user order placement and management.
+  - **Benefits**: Simplifies the purchasing process for users, enabling them to easily buy products and track their orders.
+
+### User and Buyer Management
+- **User Profiles**
+  - **Capability**: Manages user accounts and profiles.
+  - **Benefits**: Empowers users to customize their profiles and manage account settings, enhancing their personalized experience within the application.
+
+This product specification outlines the primary capabilities of eShop, highlighting how each feature provides value to users while addressing their specific needs.

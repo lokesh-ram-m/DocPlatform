@@ -25,27 +25,27 @@ public static class DocumentationPrompts
         "- For architecture, hedge — 'Detected Patterns', 'Likely'.\n" +
         "- Output clean GitHub-flavored Markdown. No preamble, start with the top-level '# ' heading.";
 
-    public static IEnumerable<DocSpec> Plan(string appName, string metadataJson)
+    // The provider attaches per-document metadata (only the slice each doc needs),
+    // so large applications stay within the model's token budget.
+    public static IEnumerable<DocSpec> Plan(string appName)
     {
-        string meta = $"\n\nAPPLICATION METADATA (the only source of truth):\n```json\n{metadataJson}\n```";
-
         // ---------- PRODUCT SPECIFICATION ----------
         yield return new(ProductGroup, "overview.md", 1,
             $"# {appName} — Product Overview\n" +
             "Audience: Product Managers, Business Units, End Users (non-technical).\n" +
             "Sections: ## What is " + appName + "?  ## The Problem It Solves  ## Who It's For (the roles/personas that benefit)  ## Key Value.\n" +
-            "Infer the product's purpose from its controllers, entities and features. Avoid technical jargon." + meta);
+            "Infer the product's purpose from its controllers, entities and features. Avoid technical jargon.");
 
         yield return new(ProductGroup, "features.md", 2,
             "# Features\n" +
             "Audience: PM / Business / End Users. Describe the product's capabilities in BUSINESS terms, grouped by " +
             "functional area (infer areas from controllers/entities, e.g. Task Management, Projects, Users & Access). " +
-            "For each capability: what it lets a user do and why it helps them. No code, no endpoints." + meta);
+            "For each capability: what it lets a user do and why it helps them. No code, no endpoints.");
 
         yield return new(ProductGroup, "use-cases.md", 3,
             "# Use Cases\n" +
             "Audience: PM / Business / End Users. Write 3-5 concrete day-to-day scenarios as short narratives showing how " +
-            "a Product Manager, a Business Unit, and an End User would use the product. Keep it practical and non-technical." + meta);
+            "a Product Manager, a Business Unit, and an End User would use the product. Keep it practical and non-technical.");
 
         // ---------- TECHNICAL SPECIFICATION ----------
         yield return new(TechnicalGroup, "architecture.md", 1,
@@ -57,39 +57,39 @@ public static class DocumentationPrompts
             "`relationships` array in the metadata (which project depends on which, frontend→API calls, persistence to the database). " +
             "## Frontend — if an Angular project is present, describe its components, services, routes, guards/interceptors, " +
             "and the backend endpoints it calls (`angular.apiCalls`). " +
-            "Do NOT draw a diagram (one is added automatically); describe the relationships in prose." + meta);
+            "Do NOT draw a diagram (one is added automatically); describe the relationships in prose.");
 
         yield return new(TechnicalGroup, "technology-stack.md", 2,
             "# Technology Stack\n" +
             "Be thorough. Present a Markdown table grouped by concern: Concern | Technology | Details. " +
             "Cover runtime & frameworks (.NET target framework, ASP.NET Core, Angular), data access, database, authentication, " +
-            "API documentation, AI/LLM, and any cross-cutting libraries. Derive strictly from technologies, capabilities and package references." + meta);
+            "API documentation, AI/LLM, and any cross-cutting libraries. Derive strictly from technologies and capabilities.");
 
         yield return new(TechnicalGroup, "infrastructure-and-cloud.md", 3,
             "# Infrastructure & Cloud\n" +
             "Sections: ## Hosting & Runtime (how each part runs — ASP.NET Core service, Angular SPA, containerizable). " +
             "## Cloud Services (list detected cloud capabilities; if none are detected, state that clearly and note it is host-agnostic/containerizable). " +
             "## Configuration (config sources such as appsettings/environment variables, if evident). " +
-            "## Deployment Considerations (grounded, hedged). Be detailed but never invent cloud services not in the metadata." + meta);
+            "## Deployment Considerations (grounded, hedged). Be detailed but never invent cloud services not in the metadata.");
 
         yield return new(TechnicalGroup, "data-storage-and-messaging.md", 4,
             "# Data, Storage & Messaging\n" +
             "Sections: ## Databases (from Database capabilities, DbContexts and data packages). " +
             "## Data Access Approach (e.g. Dapper vs EF Core). ## Entities / Domain Model (from entities). " +
             "## Caching (if detected, else 'none detected'). " +
-            "## Messaging & Queuing (list detected; if none, state 'No message queue or event bus was detected in the current metadata'). Ground every claim." + meta);
+            "## Messaging & Queuing (list detected; if none, state 'No message queue or event bus was detected in the current metadata'). Ground every claim.");
 
         yield return new(TechnicalGroup, "security-and-authentication.md", 5,
             "# Security & Authentication\n" +
             "Sections: ## Authentication — the scheme(s) from `authSchemes` (e.g. JWT Bearer, Cookie, OpenID Connect, ASP.NET Core Identity). " +
             "## Authorization — the named policies (`authPolicies`), roles (`authRoles`), and which controllers are protected " +
-            "(from each controller's `authorization` field: Authorize / AllowAnonymous). " +
+            "(from `protectedControllers`: Authorize / AllowAnonymous). " +
             "## Secret & Password Handling (e.g. BCrypt if detected in capabilities). " +
-            "## Security-relevant Libraries. If a concern is absent, say so plainly." + meta);
+            "## Security-relevant Libraries. If a concern is absent, say so plainly.");
 
         yield return new(TechnicalGroup, "api-reference.md", 6,
             "# API Reference\n" +
             "For each API project and each controller in the metadata, add a `### <ControllerName>` heading with its base route, " +
-            "then a Markdown table: Method | Action | Endpoint. Only include controllers/actions present in the metadata." + meta);
+            "then a Markdown table: Method | Action | Endpoint. Only include controllers/actions present in the metadata.");
     }
 }

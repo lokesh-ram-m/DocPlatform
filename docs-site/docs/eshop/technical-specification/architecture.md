@@ -74,49 +74,64 @@ graph LR
 
 
 ## Detected Patterns
-The architecture of the eShop application is likely based on a combination of established design patterns, such as Repository, Layered, Dependency Injection (DI), and Clean Architecture principles. The application appears to employ a modular structure allowing for separation of concerns among different components and services.
+- **CQRS**: Detected evidence of 10 command/query types with MediatR indicating that the application follows the Command Query Responsibility Segregation pattern.
+- **Repository Pattern**: Detected through the presence of repository interfaces such as `IBuyerRepository`, `IOrderRepository`, and `IRepository`.
+- **Layered Architecture**: Likely structured with a separation of concerns as indicated by the call graph showing a clear flow from controllers to services to repositories.
+- **Dependency Injection**: Detected through components being resolved via constructor injection and various dependency injection registrations.
 
 ## Solution Structure
-The eShop application consists of multiple repositories and projects, each with defined responsibilities:
+The application consists of the following projects, each with defined responsibilities:
 
-1. **Webhooks.API**: Manages webhook interactions. Implemented using a minimal API with endpoints for various webhook actions.
-2. **Catalog.API**: Handles operations related to product catalog items, including retrieval, creation, and updates. Also uses minimal API for routing.
-3. **Ordering.Domain**: Contains core domain interfaces related to ordering, such as repositories and aggregate roots that define the order model.
-4. **OrderProcessor**: Manages order processing logic but does not expose API endpoints.
-5. **eShop.ServiceDefaults**: Provides shared services and authentication mechanisms across the application.
-6. **WebhookClient**: Implements webhook receiving and authentication functionalities with minimal API endpoints.
-7. **EventBusRabbitMQ**: Facilitates messaging between components using RabbitMQ but does not provide any controllers.
-8. **Identity.API**: Manages user identity and authentication, including login and consent handling via multiple controllers.
-9. **PaymentProcessor**: A non-API service for handling payment operations but lacking further specifics in the repository.
-10. **Ordering.Infrastructure**: Contains implementations for infrastructure concerns associated with the ordering functionality, including data context.
-11. **Ordering.API**: Provides endpoints to manage orders and customer interactions, using a set of CRUD operations.
-12. **WebApp**: Client-facing components to facilitate user interaction with the eShop services and manage application state.
-13. **eShop.AppHost**: Hosts various application components, supporting routing and orchestration of services.
-14. **Basket.API**: Manages shopping basket related functionality via a set of services and API endpoints.
-15. **WebAppComponents**: Provides reusable components for the WebApp interfacing with services.
-16. **ClientApp**: Handles mobile and other client applications providing necessary services and state management.
-17. **HybridApp**: Targets mobile platforms utilizing shared services across platforms.
-18. **IntegrationEventLogEF**: Logs integration events to persist communication between microservices.
-19. **Various Testing Projects**: Include unit tests and functional tests for various components of the eShop application.
+- **Webhooks.API**: API responsible for handling webhooks and related integrations.
+- **Catalog.API**: API responsible for product catalog management.
+- **Ordering.Domain**: Library containing domain entities and logic related to ordering.
+- **OrderProcessor**: Library for processing orders with business rules.
+- **eShop.ServiceDefaults**: Library providing default services and configurations used across the application.
+- **WebhookClient**: API for managing and sending webhooks to external systems.
+- **EventBusRabbitMQ**: Library handling event bus functionalities, likely for message processing.
+- **Identity.API**: API responsible for user identity and authentication.
+- **PaymentProcessor**: API for processing payments.
+- **Ordering.Infrastructure**: Library dealing with ordering infrastructure aspects, including data access.
+- **Ordering.API**: API for managing order-related operations.
+- **WebApp**: API for the main web application functionalities.
+- **eShop.AppHost**: Host for the eShop application.
+- **Basket.API**: API for managing user shopping baskets.
+- **EventBus**: Library facilitating event bus operations.
+- **WebAppComponents**: Library containing shared components for the web application.
+- **ClientApp**: Client application for various platforms (Android, iOS, MacCatalyst).
+- **HybridApp**: Hybrid application designed for multiple platforms.
+- **IntegrationEventLogEF**: Library for logging integration events in the entity framework.
+- **Basket.UnitTests**, **ClientApp.UnitTests**, **Ordering.FunctionalTests**, and **Catalog.FunctionalTests**: Projects containing unit and functional tests for their respective components.
 
 ## Component Responsibilities
-- **Webhooks.API**: Handles webhook requests and responses, interacting with event logging and service defaults.
-- **Catalog.API**: Manages catalog items and integrates with shared services for common functionalities.
-- **Ordering.API**: Processes user orders and interacts with infrastructure and domain services.
-- **Identity.API**: Ensures user management and authentication.
-- **Basket.API**: Provides access to shopping basket services.
-- **WebApp**: Serves as the user interface layer that connects to multiple APIs and provides a consolidated user experience.
-- **IntegrationEventLogEF**: Keeps track of integration events across different services to ensure reliable communication.
+Each project is responsible for distinct areas:
+- **Webhooks.API** interacts with external systems to receive updates.
+- **Catalog.API** handles operations related to product information.
+- **Ordering.Domain** encapsulates core domain logic pertaining to orders.
+- **OrderProcessor** implements business processes for order fulfillment.
+- **eShop.ServiceDefaults** provides common utilities and defaults.
+- **WebhookClient** sends information to external webhook endpoints.
+- **EventBusRabbitMQ** manages events between services.
+- **Identity.API** manages authentication and user identity.
+- **PaymentProcessor** executes payment transactions.
+- **Ordering.Infrastructure** facilitates data access and persistence for orders.
+- **Ordering.API** acts as an interface for order requests.
+- **WebApp** serves the main application functionalities.
+- **eShop.AppHost** serves as the main host for the application functionalities.
+- **Basket.API** maintains user basket state during shopping.
+- **EventBus** supports inter-service communication.
+- **WebAppComponents** holds shared UI components.
+- **ClientApp** represents mobile and cross-platform use cases.
+- **HybridApp** integrates functionalities for a hybrid user experience.
+- **IntegrationEventLogEF** manages logging for integration events.
+- Test projects ensure reliability through automated testing.
 
 ## How the Pieces Fit Together
-The application flow can be described through the relationships defined in the metadata:
+Based on the relationships detected:
+- `eShop.AppHost` acts as the main entry point and depends on various APIs including `Basket.API`, `Catalog.API`, `Identity.API`, `Ordering.API`, `Webhooks.API`, and others.
+- APIs like `Ordering.API`, `Catalog.API`, and `Identity.API` depend on the `eShop.ServiceDefaults` for shared configurations and services.
+- The `EventBusRabbitMQ` is a shared component for event management and several APIs rely on it for consistent message processing.
+- Persistence of data related to several APIs like `Webhooks.API`, `Catalog.API`, `Identity.API`, and `Ordering.Infrastructure` occurs in a PostgreSQL database, as indicated by the "persists to" relationships.
 
-- The **eShop.AppHost** is the central orchestrator, depending on multiple APIs like **Catalog.API**, **Identity.API**, **Ordering.API**, **Basket.API**, and services such as **Webhooks.API** and **PaymentProcessor**.
-- The **WebApp** serves as the frontend for users, leveraging services such as **BasketService**, **OrderingService**, and connecting to the **EventBusRabbitMQ** for message handling.
-- **Webhooks.API** and **Catalog.API** persist data to **PostgreSQL**, indicating that they handle database interactions via Entity Framework Core.
-- The **Ordering.API** and **Ordering.Infrastructure** rely on one another, with the Infrastructure layer providing the necessary data context to manage orders.
-- **EventBusRabbitMQ** is used across various APIs to enable message-driven communication, helping trigger events based on actions carried out within the APIs.
-- The **IntegrationEventLogEF** connects with the **EventBus** to log events and maintain communication through RabbitMQ.
-- Various components, notably the **Identity.API** and **WebhookClient**, utilize shared services via **eShop.ServiceDefaults** for authentication.
-
-This interconnected structure posits a modular design, allowing various projects within the eShop to work cohesively while adhering to their responsibilities.
+## Frontend
+No Angular project was detected in the metadata; thus, there are no components, services, routes, guards, or interceptors to describe. The focus is likely on .NET-based APIs and libraries for backend services.

@@ -37,14 +37,16 @@ public class GitHubModelsProvider : IAIProvider
         CancellationToken cancellationToken = default)
     {
         var result = new DocumentationResult { ApplicationName = application.Name };
-        // Compact projection so large apps (many projects) fit the model's token budget.
-        // Drops PackageReferences/ProjectReferences (covered by Capabilities/Relationships)
-        // and caps long lists.
-        string metadataJson = JsonSerializer.Serialize(ToCompact(application), JsonOptions);
 
-        foreach (DocSpec spec in DocumentationPrompts.Plan(application.Name, metadataJson))
+        foreach (DocSpec spec in DocumentationPrompts.Plan(application.Name))
         {
-            string markdown = await CompleteAsync(DocumentationPrompts.System, spec.Instructions, cancellationToken);
+            // Per-document metadata — only the slice this doc needs, so large apps stay
+            // within the model's token budget.
+            string metadataJson = JsonSerializer.Serialize(MetadataFor(application, spec.FileName), JsonOptions);
+            string user = spec.Instructions +
+                "\n\nAPPLICATION METADATA (the only source of truth):\n```json\n" + metadataJson + "\n```";
+
+            string markdown = await CompleteAsync(DocumentationPrompts.System, user, cancellationToken);
             result.Add(new GeneratedDocument
             {
                 Group = spec.Group,
@@ -73,46 +75,81 @@ public class GitHubModelsProvider : IAIProvider
         return response.Value.Content;
     }
 
-    // A trimmed view of the model for the prompt — keeps what the AI needs, drops the rest.
-    private static object ToCompact(ApplicationModel app) => new
+    // Builds ONLY the metadata a given document needs — keeps each prompt small.
+    private static object MetadataFor(ApplicationModel app, string fileName)
     {
-        name = app.Name,
-        technologies = app.Technologies,
-        capabilities = app.Capabilities.Select(c => new { c.Category, c.Name }),
-        architecturePatterns = app.ArchitecturePatterns.Select(p => new { p.Name, p.Evidence }),
-        // Components present but not analyzed (React/Python/Java/...) — mention as detected-but-unanalyzed.
-        unanalyzedComponents = app.Repositories.SelectMany(r => r.SkippedProjects).Select(s => new { s.Name, s.Type }),
-        relationships = app.Relationships.Select(r => new { r.From, r.To, r.Type }),
-        callGraph = app.CallGraph.Take(60).Select(r => new { r.From, r.To }),
-        repositories = app.Repositories.Select(repo => new
+        var capabilities = app.Capabilities.Select(c => new { c.Category, c.Name });
+        var projectsLite = AllProjects(app).Select(p => new { p.Name, kind = p.Kind.ToString(), p.TargetFramework });
+        var skipped = app.Repositories.SelectMany(r => r.SkippedProjects).Select(s => new { s.Name, s.Type });
+        string name = app.Name;
+
+        return fileName switch
         {
-            name = repo.Name,
-            projects = repo.Projects.Select(p => new
+            "overview.md" => new
             {
-                name = p.Name,
-                kind = p.Kind.ToString(),
-                targetFramework = p.TargetFramework,
-                hasAuthentication = p.HasAuthentication,
-                authSchemes = p.AuthSchemes,
-                authPolicies = p.AuthPolicies,
-                authRoles = p.AuthRoles,
-                controllers = p.Controllers.Select(c => new { c.Name, c.Route, c.Authorization, actions = Cap(c.Actions, 20) }),
-                services = Cap(p.Services, 15),
-                interfaces = Cap(p.Interfaces, 15),
-                entities = Cap(p.Entities, 20),
-                dbContexts = p.DbContexts,
-                cqrsRequests = Cap(p.CqrsRequests, 20),
-                angular = p.Angular is null ? null : new
-                {
-                    components = Cap(p.Angular.Components, 25),
-                    routes = Cap(p.Angular.Routes, 25),
-                    services = Cap(p.Angular.Services, 20),
-                    guards = p.Angular.Guards,
-                    apiCalls = Cap(p.Angular.ApiCalls, 30)
-                }
-            })
-        })
-    };
+                name, technologies = app.Technologies, capabilities,
+                repositories = app.Repositories.Select(r => new { r.Name, projects = r.Projects.Select(p => new { p.Name, kind = p.Kind.ToString() }) }),
+                architecturePatterns = app.ArchitecturePatterns.Select(p => p.Name),
+                unanalyzedComponents = skipped
+            },
+            "features.md" => new
+            {
+                name, capabilities,
+                controllers = AllControllers(app).Select(c => c.Name).Distinct(),
+                entities = AllProjects(app).SelectMany(p => p.Entities).Distinct().Take(50),
+                angular = AngularSummary(app)
+            },
+            "use-cases.md" => new
+            {
+                name, capabilities,
+                controllers = AllControllers(app).Select(c => c.Name).Distinct()
+            },
+            "architecture.md" => new
+            {
+                name, projects = projectsLite,
+                relationships = app.Relationships.Select(r => new { r.From, r.To, r.Type }),
+                callGraph = app.CallGraph.Take(50).Select(r => new { r.From, r.To }),
+                architecturePatterns = app.ArchitecturePatterns.Select(p => new { p.Name, p.Evidence }),
+                angular = AngularSummary(app)
+            },
+            "technology-stack.md" => new { name, technologies = app.Technologies, capabilities, projects = projectsLite },
+            "infrastructure-and-cloud.md" => new { name, capabilities, projects = projectsLite, unanalyzedComponents = skipped },
+            "data-storage-and-messaging.md" => new
+            {
+                name, capabilities,
+                dbContexts = AllProjects(app).SelectMany(p => p.DbContexts).Distinct(),
+                entities = AllProjects(app).SelectMany(p => p.Entities).Distinct().Take(60)
+            },
+            "security-and-authentication.md" => new
+            {
+                name, capabilities,
+                authSchemes = AllProjects(app).SelectMany(p => p.AuthSchemes).Distinct(),
+                authPolicies = AllProjects(app).SelectMany(p => p.AuthPolicies).Distinct(),
+                authRoles = AllProjects(app).SelectMany(p => p.AuthRoles).Distinct(),
+                protectedControllers = AllControllers(app).Where(c => c.Authorization is not null).Select(c => new { c.Name, c.Authorization }),
+                angularGuards = AllProjects(app).Where(p => p.Angular is not null).SelectMany(p => p.Angular!.Guards).Distinct()
+            },
+            "api-reference.md" => new
+            {
+                name,
+                controllers = AllControllers(app).Select(c => new { c.Name, c.Route, actions = Cap(c.Actions, 25) }),
+                angularApiCalls = AllProjects(app).Where(p => p.Angular is not null).SelectMany(p => p.Angular!.ApiCalls).Distinct().Take(60)
+            },
+            _ => new { name, technologies = app.Technologies, capabilities }
+        };
+    }
+
+    private static IEnumerable<ProjectModel> AllProjects(ApplicationModel app) => app.Repositories.SelectMany(r => r.Projects);
+    private static IEnumerable<ControllerModel> AllControllers(ApplicationModel app) => AllProjects(app).SelectMany(p => p.Controllers);
+
+    private static object AngularSummary(ApplicationModel app) =>
+        AllProjects(app).Where(p => p.Angular is not null).Select(p => new
+        {
+            components = Cap(p.Angular!.Components, 20),
+            services = Cap(p.Angular!.Services, 20),
+            routes = Cap(p.Angular!.Routes, 20),
+            apiCalls = Cap(p.Angular!.ApiCalls, 30)
+        });
 
     // Cap a list, appending a "+N more" marker so the AI knows it's truncated.
     private static List<string> Cap(List<string> list, int max) =>

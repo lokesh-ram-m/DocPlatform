@@ -7,109 +7,108 @@ sidebar_position: 6
 ### WebHooksApi (Minimal API)
 **Base Route:** `/api/webhooks`
 
-| Method | Action          | Endpoint           |
-|--------|----------------|---------------------|
-| GET    | Retrieve all   | `/`                 |
-| GET    | Retrieve by ID | `/{id:int}`        |
-| POST   | Create         | `/`                 |
-| DELETE | Delete by ID   | `/{id:int}`        |
+| Method | Action                             | Endpoint                      |
+|--------|------------------------------------|-------------------------------|
+| GET    | Get all webhooks                  | `/api/webhooks`               |
+| GET    | Get a webhook by ID               | `/api/webhooks/{id:int}`      |
+| POST   | Create a new webhook               | `/api/webhooks`               |
+| DELETE | Delete a webhook by ID            | `/api/webhooks/{id:int}`      |
 
 ### CatalogApi (Minimal API)
-**Base Route:** `api/catalog`
+**Base Route:** `/api/catalog`
 
-| Method | Action                      | Endpoint                                        |
-|--------|----------------------------|--------------------------------------------------|
-| GET    | Retrieve all items         | `/items`                                        |
-| GET    | Retrieve items (duplicate) | `/items`                                        |
-| GET    | Retrieve items by filters   | `/items/by`                                    |
-| GET    | Retrieve by ID              | `/items/{id:int}`                              |
-| GET    | Retrieve by name            | `/items/by/{name:minlength(1)}`               |
-| GET    | Retrieve item picture       | `/items/{id:int}/pic`                          |
-| GET    | Retrieve with relevance     | `/items/withsemanticrelevance/{text:minlength(1)}` |
-| GET    | Retrieve items w/o params   | `/items/withsemanticrelevance`                  |
-| GET    | Retrieve by type and brand  | `/items/type/{typeId}/brand/{brandId?}`       |
-| GET    | Retrieve all by brand       | `/items/type/all/brand/{brandId:int?}`        |
-| GET    | Retrieve catalog types      | `/catalogtypes`                                 |
-| GET    | Retrieve catalog brands     | `/catalogbrands`                                |
-| PUT    | Update item (no ID)        | `/items`                                        |
-| PUT    | Update item by ID          | `/items/{id:int}`                              |
-| POST   | Create item                | `/items`                                        |
-| DELETE | Delete item by ID          | `/items/{id:int}`                              |
+| Method | Action                              | Endpoint                                       |
+|--------|-------------------------------------|------------------------------------------------|
+| GET    | Get all catalog items               | `/api/catalog/items`                           |
+| GET    | Get catalog items by a specific criteria | `/api/catalog/items/by`                    |
+| GET    | Get a catalog item by ID            | `/api/catalog/items/{id:int}`                 |
+| GET    | Get catalog items by name           | `/api/catalog/items/by/{name:minlength(1)}`  |
+| GET    | Get an image for a catalog item     | `/api/catalog/items/{id:int}/pic`            |
+| GET    | Get items with semantic relevance    | `/api/catalog/items/withsemanticrelevance/{text:minlength(1)}` |
+| GET    | Get all items with semantic relevance | `/api/catalog/items/withsemanticrelevance`   |
+| GET    | Get items by type and brand         | `/api/catalog/items/type/{typeId}/brand/{brandId?}` |
+| GET    | Get all items of a specific type and brand | `/api/catalog/items/type/all/brand/{brandId:int?}` |
+| GET    | Get all catalog types                | `/api/catalog/catalogtypes`                   |
+| GET    | Get all catalog brands               | `/api/catalog/catalogbrands`                  |
+| PUT    | Update catalog items                 | `/api/catalog/items`                           |
+| PUT    | Update a specific catalog item       | `/api/catalog/items/{id:int}`                 |
+| POST   | Create a new catalog item            | `/api/catalog/items`                           |
+| DELETE | Delete a catalog item by ID          | `/api/catalog/items/{id:int}`                 |
 
 ### OpenApi.Extensions (Minimal API)
 **Base Route:** `/`
 
-| Method | Action        | Endpoint |
-|--------|---------------|----------|
-| GET    | Get API info | `/`      |
+| Method | Action                              | Endpoint     |
+|--------|-------------------------------------|--------------|
+| GET    | Get Open API info                   | `/`          |
 
 ### WebhookEndpoints (Minimal API)
-**Base Route:** `webhook-received`
+**Base Route:** `/`
 
-| Method | Action              | Endpoint              |
-|--------|---------------------|-----------------------|
-| POST   | Receive Webhook     | `/webhook-received`   |
+| Method | Action                              | Endpoint          |
+|--------|-------------------------------------|-------------------|
+| POST   | Receive webhook                     | `/webhook-received` |
 
 ### AuthenticationEndpoints (Minimal API)
 **Base Route:** `/`
 
-| Method | Action              | Endpoint              |
-|--------|---------------------|-----------------------|
-| POST   | User logout         | `/logout`             |
+| Method | Action                              | Endpoint    |
+|--------|-------------------------------------|-------------|
+| POST   | Logout                              | `/logout`   |
 
 ### AccountController
 **Base Route:** `/`
 
-| Method | Action               | Endpoint          |
-|--------|----------------------|-------------------|
-| GET    | Login page           | `Login`           |
-| POST   | User login           | `Login`           |
-| GET    | Logout page          | `Logout`          |
-| POST   | User logout          | `Logout`          |
-| GET    | Access Denied        | `AccessDenied`    |
+| Method | Action                              | Endpoint    |
+|--------|-------------------------------------|-------------|
+| GET    | Get account information             | `/`         |
+| POST   | Create or update account            | `/`         |
+| GET    | Get account information             | `/`         |
+| POST   | Create or update account            | `/`         |
+| GET    | Get account information             | `/`         |
 
 ### ExternalController
 **Base Route:** `/`
 
-| Method | Action               | Endpoint          |
-|--------|----------------------|-------------------|
-| GET    | Start external auth   | `Challenge`       |
-| GET    | Callback handler      | `Callback`        |
+| Method | Action                              | Endpoint    |
+|--------|-------------------------------------|-------------|
+| GET    | Get external resources              | `/`         |
+| GET    | Get external resources              | `/`         |
 
 ### DeviceController
 **Base Route:** `/`
 
-| Method | Action               | Endpoint          |
-|--------|----------------------|-------------------|
-| GET    | Index                | `Index`           |
-| POST   | User code capture    | `UserCodeCapture` |
-| POST   | Callback             | `Callback`        |
+| Method | Action                              | Endpoint    |
+|--------|-------------------------------------|-------------|
+| GET    | Get device information              | `/`         |
+| POST   | Register a new device               | `/`         |
+| POST   | Another device action               | `/`         |
 
 ### ConsentController
 **Base Route:** `/`
 
-| Method | Action               | Endpoint          |
-|--------|----------------------|-------------------|
-| GET    | Consent Index        | `Index`           |
-| POST   | Submit Consent       | `Index`           |
+| Method | Action                              | Endpoint    |
+|--------|-------------------------------------|-------------|
+| GET    | Get consent information             | `/`         |
+| POST   | Provide consent                     | `/`         |
 
 ### GrantsController
 **Base Route:** `/`
 
-| Method | Action               | Endpoint          |
-|--------|----------------------|-------------------|
-| GET    | Index of grants      | `Index`           |
-| POST   | Revoke grant         | `Revoke`          |
+| Method | Action                              | Endpoint    |
+|--------|-------------------------------------|-------------|
+| GET    | Get grant information               | `/`         |
+| POST   | Request a new grant                 | `/`         |
 
 ### OrdersApi (Minimal API)
-**Base Route:** `api/orders`
+**Base Route:** `/api/orders`
 
-| Method | Action                     | Endpoint           |
-|--------|----------------------------|---------------------|
-| PUT    | Cancel order               | `/cancel`           |
-| PUT    | Ship order                 | `/ship`             |
-| GET    | Retrieve order by ID       | `{orderId:int}`     |
-| GET    | Retrieve all orders        | `/`                 |
-| GET    | Retrieve card types        | `/cardtypes`        |
-| POST   | Create draft order         | `/draft`            |
-| POST   | Create order               | `/`                 |
+| Method | Action                              | Endpoint                    |
+|--------|-------------------------------------|-----------------------------|
+| PUT    | Cancel an order                     | `/api/orders/cancel`       |
+| PUT    | Ship an order                       | `/api/orders/ship`         |
+| GET    | Get order by ID                    | `/api/orders/{orderId:int}` |
+| GET    | Get all orders                      | `/api/orders`              |
+| GET    | Get available card types            | `/api/orders/cardtypes`    |
+| POST   | Create a draft order                | `/api/orders/draft`        |
+| POST   | Create a new order                  | `/api/orders`              |
