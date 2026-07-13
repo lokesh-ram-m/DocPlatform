@@ -15,6 +15,18 @@ public class RoslynMetadataExtractor : IMetadataExtractor
     private static readonly Regex ModelsFolder =
         new(@"[/\\](Models|Entities|Domain)([/\\]|$)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+    // BCL references, loaded once — lets the SemanticModel resolve core types.
+    private static readonly Lazy<MetadataReference[]> ReferenceAssemblies = new(() =>
+    {
+        var refs = new List<MetadataReference>();
+        if (AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") is string tpa)
+            foreach (string path in tpa.Split(Path.PathSeparator))
+                try { refs.Add(MetadataReference.CreateFromFile(path)); } catch { /* skip unreadable */ }
+        if (refs.Count == 0)
+            refs.Add(MetadataReference.CreateFromFile(typeof(object).Assembly.Location));
+        return refs.ToArray();
+    });
+
     private readonly IReadOnlyList<IProjectAnalyzer> _analyzers = new IProjectAnalyzer[]
     {
         new ControllerAnalyzer(),
@@ -57,18 +69,26 @@ public class RoslynMetadataExtractor : IMetadataExtractor
             string code;
             try { code = File.ReadAllText(file); } catch { continue; }
 
-            SyntaxNode root = CSharpSyntaxTree.ParseText(code).GetRoot();
+            SyntaxTree tree = CSharpSyntaxTree.ParseText(code, path: file);
             string relDir = Path.GetDirectoryName(file)!.Replace(projectDir, "");
 
             files.Add(new AnalyzedFile
             {
                 Path = file,
                 RelativeDir = relDir,
-                Root = root,
+                Tree = tree,
                 InModelsFolder = ModelsFolder.IsMatch(relDir)
             });
         }
 
-        return new ProjectAnalysisContext { Project = project, Files = files };
+        // Build a semantic compilation from the project's own trees. External framework
+        // types may not resolve, but the project's own symbols (cross-file) will.
+        CSharpCompilation compilation = CSharpCompilation.Create(
+            "DocPlatform.Analysis",
+            files.Select(f => f.Tree),
+            ReferenceAssemblies.Value,
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        return new ProjectAnalysisContext { Project = project, Files = files, Compilation = compilation };
     }
 }
