@@ -27,7 +27,10 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          # net9.0 target, but 10.x packages need the .NET 10 SDK to build.
+          dotnet-version: |
+            9.0.x
+            10.0.x
 
       - name: Set up Node
         uses: actions/setup-node@v4
