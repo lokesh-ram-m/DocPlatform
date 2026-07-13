@@ -45,6 +45,12 @@ public class DocumentationOrchestrator
         application.Technologies = TechnologyAggregator.From(application);
         application.Capabilities = CapabilityClassifier.Classify(application);
         application.Relationships = GraphBuilder.Build(application);   // knowledge graph
+        application.CallGraph = application.Repositories               // component call graph
+            .SelectMany(r => r.Projects)
+            .SelectMany(p => p.ComponentDependencies)
+            .GroupBy(r => $"{r.From}|{r.To}", StringComparer.Ordinal)
+            .Select(g => g.First())
+            .ToList();
         return application;
     }
 
@@ -76,16 +82,23 @@ public class DocumentationOrchestrator
 
     private static void InjectDiagram(DocumentationResult docs, ApplicationModel application)
     {
-        string mermaid = DiagramGenerator.ToMermaid(application);
-        if (string.IsNullOrEmpty(mermaid)) return;
+        string systemDiagram = DiagramGenerator.ToMermaid(application);
+        string componentDiagram = DiagramGenerator.ToComponentMermaid(application);
+        if (string.IsNullOrEmpty(systemDiagram) && string.IsNullOrEmpty(componentDiagram)) return;
 
         GeneratedDocument? arch = docs.Documents.FirstOrDefault(d =>
             d.FileName.Equals("architecture.md", StringComparison.OrdinalIgnoreCase));
         if (arch is null) return;
 
-        string section = "## System Diagram\n\n" +
-                         "_Generated from the application's knowledge graph (project references, calls, persistence)._\n\n" +
-                         mermaid + "\n";
+        var section = new System.Text.StringBuilder();
+        if (!string.IsNullOrEmpty(systemDiagram))
+            section.Append("## System Diagram\n\n")
+                   .Append("_Generated from the application's knowledge graph (project references, calls, persistence)._\n\n")
+                   .Append(systemDiagram).Append('\n');
+        if (!string.IsNullOrEmpty(componentDiagram))
+            section.Append("\n## Component Call Graph\n\n")
+                   .Append("_How components wire up (controller → service → repository → data), from constructor injection._\n\n")
+                   .Append(componentDiagram).Append('\n');
 
         // Insert the diagram right after the first heading line.
         string[] lines = arch.Markdown.Split('\n');

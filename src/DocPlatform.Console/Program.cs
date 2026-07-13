@@ -163,6 +163,13 @@ static void PrintReport(ApplicationModel app)
     Console.WriteLine("Capabilities:");
     foreach (IGrouping<string, DetectedCapability> g in app.Capabilities.GroupBy(c => c.Category))
         Console.WriteLine($"   {g.Key}: {string.Join(", ", g.Select(c => c.Name).Distinct())}");
+
+    if (app.CallGraph.Count > 0)
+    {
+        Console.WriteLine($"Call graph ({app.CallGraph.Count} edges):");
+        foreach (Relationship e in app.CallGraph.Take(15))
+            Console.WriteLine($"   {e.From} → {e.To}");
+    }
 }
 
 static string? GetArg(string[] args, string name)

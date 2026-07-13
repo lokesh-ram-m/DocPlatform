@@ -20,6 +20,10 @@ public class ApplicationModel
 
     // Knowledge graph: how the projects relate (dependencies, calls, persistence).
     public List<Relationship> Relationships { get; set; } = new();
+
+    // Call graph: how components wire up (controller -> service -> repository -> data),
+    // aggregated from every project's ComponentDependencies.
+    public List<Relationship> CallGraph { get; set; } = new();
 }
 
 public class RepositoryModel
@@ -61,6 +65,9 @@ public class ProjectModel
 
     // interface -> implementation, from DI registrations (AddScoped/Singleton/Transient).
     public Dictionary<string, string> ServiceImplementations { get; set; } = new();
+
+    // Component dependencies from constructor injection (this class -> what it uses).
+    public List<Relationship> ComponentDependencies { get; set; } = new();
 
     // ---- Angular specifics (null for non-Angular projects) ----
     public AngularInfo? Angular { get; set; }

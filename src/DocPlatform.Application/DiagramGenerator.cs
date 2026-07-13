@@ -42,4 +42,33 @@ public static class DiagramGenerator
         sb.AppendLine("```");
         return sb.ToString();
     }
+
+    // Renders the component call graph (controller -> service -> repository -> data).
+    // Skipped for very large graphs where a diagram would be unreadable.
+    public static string ToComponentMermaid(ApplicationModel app)
+    {
+        if (app.CallGraph.Count == 0) return string.Empty;
+
+        List<string> nodes = app.CallGraph.SelectMany(r => new[] { r.From, r.To })
+            .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        if (nodes.Count > 30) return string.Empty;   // too busy to be useful
+
+        var ids = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        int counter = 0;
+        string IdFor(string name)
+        {
+            if (!ids.TryGetValue(name, out string? id)) { id = "c" + counter++; ids[name] = id; }
+            return id;
+        }
+
+        var sb = new StringBuilder();
+        sb.AppendLine("```mermaid");
+        sb.AppendLine("graph LR");
+        foreach (string name in nodes)
+            sb.AppendLine($"  {IdFor(name)}[\"{name}\"]");
+        foreach (Relationship r in app.CallGraph)
+            sb.AppendLine($"  {IdFor(r.From)} --> {IdFor(r.To)}");
+        sb.AppendLine("```");
+        return sb.ToString();
+    }
 }
