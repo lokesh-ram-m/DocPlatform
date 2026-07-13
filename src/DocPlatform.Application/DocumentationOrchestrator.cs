@@ -51,6 +51,7 @@ public class DocumentationOrchestrator
             .GroupBy(r => $"{r.From}|{r.To}", StringComparer.Ordinal)
             .Select(g => g.First())
             .ToList();
+        application.ArchitecturePatterns = ArchitectureDetector.Detect(application);
         return application;
     }
 

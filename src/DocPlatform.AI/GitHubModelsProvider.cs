@@ -79,6 +79,7 @@ public class GitHubModelsProvider : IAIProvider
         name = app.Name,
         technologies = app.Technologies,
         capabilities = app.Capabilities.Select(c => new { c.Category, c.Name }),
+        architecturePatterns = app.ArchitecturePatterns.Select(p => new { p.Name, p.Evidence }),
         relationships = app.Relationships.Select(r => new { r.From, r.To, r.Type }),
         callGraph = app.CallGraph.Take(60).Select(r => new { r.From, r.To }),
         repositories = app.Repositories.Select(repo => new

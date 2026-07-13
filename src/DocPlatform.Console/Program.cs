@@ -164,6 +164,13 @@ static void PrintReport(ApplicationModel app)
     foreach (IGrouping<string, DetectedCapability> g in app.Capabilities.GroupBy(c => c.Category))
         Console.WriteLine($"   {g.Key}: {string.Join(", ", g.Select(c => c.Name).Distinct())}");
 
+    if (app.ArchitecturePatterns.Count > 0)
+    {
+        Console.WriteLine("Architecture patterns:");
+        foreach (DetectedPattern p in app.ArchitecturePatterns)
+            Console.WriteLine($"   • {p.Name} — {p.Evidence}");
+    }
+
     if (app.CallGraph.Count > 0)
     {
         Console.WriteLine($"Call graph ({app.CallGraph.Count} edges):");

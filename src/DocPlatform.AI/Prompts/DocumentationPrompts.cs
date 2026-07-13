@@ -50,7 +50,8 @@ public static class DocumentationPrompts
         // ---------- TECHNICAL SPECIFICATION ----------
         yield return new(TechnicalGroup, "architecture.md", 1,
             "# Architecture\n" +
-            "Sections: ## Detected Patterns (heuristic; hedge — Repository, Layered, DI, Clean Architecture based on interfaces/services/refs). " +
+            "Sections: ## Detected Patterns — list the `architecturePatterns` from the metadata with their evidence; " +
+            "keep the wording tentative ('detected', 'likely'). " +
             "## Solution Structure (each repository and its projects, with responsibilities). " +
             "## Component Responsibilities. ## How the Pieces Fit Together — describe the flow using the " +
             "`relationships` array in the metadata (which project depends on which, frontend→API calls, persistence to the database). " +

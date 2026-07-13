@@ -24,6 +24,9 @@ public class ApplicationModel
     // Call graph: how components wire up (controller -> service -> repository -> data),
     // aggregated from every project's ComponentDependencies.
     public List<Relationship> CallGraph { get; set; } = new();
+
+    // Heuristically-detected architecture patterns (Clean, Layered, CQRS, ...).
+    public List<DetectedPattern> ArchitecturePatterns { get; set; } = new();
 }
 
 public class RepositoryModel
