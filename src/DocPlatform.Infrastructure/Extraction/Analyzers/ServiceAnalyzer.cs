@@ -11,13 +11,12 @@ public sealed class ServiceAnalyzer : IProjectAnalyzer
     {
         foreach (AnalyzedFile file in context.Files)
         {
+            // Interfaces go to Interfaces only (not Services).
             foreach (InterfaceDeclarationSyntax iface in file.Root.DescendantNodes().OfType<InterfaceDeclarationSyntax>())
-            {
-                string n = iface.Identifier.Text;
-                if (n.StartsWith("I")) context.Project.Interfaces.Add(n);
-                if (n.EndsWith("Service")) context.Project.Services.Add(n);
-            }
+                if (iface.Identifier.Text.StartsWith("I"))
+                    context.Project.Interfaces.Add(iface.Identifier.Text);
 
+            // Services = concrete classes ending in "Service" (DIAnalyzer adds registered impls too).
             foreach (TypeDeclarationSyntax t in file.Root.DescendantNodes().OfType<TypeDeclarationSyntax>())
             {
                 if (t is InterfaceDeclarationSyntax) continue;

@@ -59,6 +59,9 @@ public class ProjectModel
     public List<string> CqrsRequests { get; set; } = new();   // MediatR commands/queries
     public bool HasAuthentication { get; set; }
 
+    // interface -> implementation, from DI registrations (AddScoped/Singleton/Transient).
+    public Dictionary<string, string> ServiceImplementations { get; set; } = new();
+
     // ---- Angular specifics (null for non-Angular projects) ----
     public AngularInfo? Angular { get; set; }
 }

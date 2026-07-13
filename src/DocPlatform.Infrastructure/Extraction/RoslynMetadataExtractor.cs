@@ -33,6 +33,7 @@ public class RoslynMetadataExtractor : IMetadataExtractor
         new DbContextAnalyzer(),
         new EntityAnalyzer(),
         new ServiceAnalyzer(),
+        new DIAnalyzer(),
         new CqrsAnalyzer(),
         new AuthAnalyzer(),
     };

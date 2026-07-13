@@ -152,7 +152,7 @@ static void PrintReport(ApplicationModel app)
                 foreach (ControllerModel c in p.Controllers.Take(4))
                     Console.WriteLine($"          • {c.Name}: {string.Join(", ", c.Actions.Take(6))}{(c.Actions.Count > 6 ? " …" : "")}");
             }
-            if (p.Services.Count > 0)   Console.WriteLine($"        services:    {p.Services.Count}");
+            if (p.Services.Count > 0)   Console.WriteLine($"        services:    {string.Join(", ", p.Services.Take(14))}{(p.Services.Count > 14 ? " …" : "")}");
             if (p.Entities.Count > 0)   Console.WriteLine($"        entities:    {string.Join(", ", p.Entities.Take(12))}{(p.Entities.Count > 12 ? " …" : "")}");
             if (p.DbContexts.Count > 0) Console.WriteLine($"        dbcontexts:  {string.Join(", ", p.DbContexts)}");
             if (p.CqrsRequests.Count > 0) Console.WriteLine($"        cqrs:        {p.CqrsRequests.Count} commands/queries");
