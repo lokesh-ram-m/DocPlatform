@@ -55,6 +55,8 @@ public static class DocumentationPrompts
             "## Solution Structure (each repository and its projects, with responsibilities). " +
             "## Component Responsibilities. ## How the Pieces Fit Together — describe the flow using the " +
             "`relationships` array in the metadata (which project depends on which, frontend→API calls, persistence to the database). " +
+            "## Frontend — if an Angular project is present, describe its components, services, routes, guards/interceptors, " +
+            "and the backend endpoints it calls (`angular.apiCalls`). " +
             "Do NOT draw a diagram (one is added automatically); describe the relationships in prose." + meta);
 
         yield return new(TechnicalGroup, "technology-stack.md", 2,

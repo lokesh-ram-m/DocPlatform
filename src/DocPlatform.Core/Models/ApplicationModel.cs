@@ -107,4 +107,7 @@ public class AngularInfo
     public List<string> Components { get; set; } = new();
     public List<string> Routes { get; set; } = new();
     public List<string> Dependencies { get; set; } = new();
+    public List<string> Services { get; set; } = new();     // @Injectable services
+    public List<string> Guards { get; set; } = new();       // route guards + HTTP interceptors
+    public List<string> ApiCalls { get; set; } = new();     // backend endpoints the app calls
 }

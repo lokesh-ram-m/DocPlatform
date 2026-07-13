@@ -41,9 +41,13 @@ string engine = config["Extraction:Engine"] ?? "Roslyn";
 var services = new ServiceCollection();
 services.AddSingleton<IRepositoryScanner, RepositoryScanner>();
 services.AddSingleton<IMetadataExtractor>(_ =>
-    engine.Equals("Heuristic", StringComparison.OrdinalIgnoreCase)
+{
+    // .NET projects -> chosen .NET extractor; Angular projects -> Angular extractor.
+    IMetadataExtractor dotnet = engine.Equals("Heuristic", StringComparison.OrdinalIgnoreCase)
         ? new HeuristicMetadataExtractor()
-        : new RoslynMetadataExtractor());
+        : new RoslynMetadataExtractor();
+    return new CompositeMetadataExtractor(dotnet, new AngularMetadataExtractor());
+});
 services.AddSingleton<IMarkdownWriter, MarkdownWriter>();
 services.AddSingleton<IAIProvider>(_ => new GitHubModelsProvider(endpoint, model, token));
 services.AddSingleton<DocumentationOrchestrator>();
@@ -156,7 +160,14 @@ static void PrintReport(ApplicationModel app)
             if (p.Entities.Count > 0)   Console.WriteLine($"        entities:    {string.Join(", ", p.Entities.Take(12))}{(p.Entities.Count > 12 ? " …" : "")}");
             if (p.DbContexts.Count > 0) Console.WriteLine($"        dbcontexts:  {string.Join(", ", p.DbContexts)}");
             if (p.CqrsRequests.Count > 0) Console.WriteLine($"        cqrs:        {p.CqrsRequests.Count} commands/queries");
-            if (p.Angular is not null)  Console.WriteLine($"        angular:     {p.Angular.Components.Count} components, {p.Angular.Routes.Count} routes");
+            if (p.Angular is not null)
+            {
+                Console.WriteLine($"        angular:     {p.Angular.Components.Count} components, {p.Angular.Services.Count} services, {p.Angular.Routes.Count} routes, {p.Angular.Guards.Count} guards, {p.Angular.ApiCalls.Count} api calls");
+                if (p.Angular.ApiCalls.Count > 0)
+                    Console.WriteLine($"          api calls: {string.Join(", ", p.Angular.ApiCalls.Take(8))}");
+                if (p.Angular.Routes.Count > 0)
+                    Console.WriteLine($"          routes: {string.Join(", ", p.Angular.Routes.Take(8))}");
+            }
         }
     }
     List<SkippedProject> skipped = app.Repositories.SelectMany(r => r.SkippedProjects).ToList();

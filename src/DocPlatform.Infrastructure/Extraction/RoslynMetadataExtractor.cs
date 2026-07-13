@@ -43,11 +43,7 @@ public class RoslynMetadataExtractor : IMetadataExtractor
     {
         foreach (ProjectModel project in repository.Projects)
         {
-            if (project.Kind == ProjectKind.Angular)
-            {
-                ExtractionHelpers.ExtractAngular(project);
-                continue;
-            }
+            if (project.Kind == ProjectKind.Angular) continue;   // handled by AngularMetadataExtractor
 
             ProjectAnalysisContext context = BuildContext(project);
             foreach (IProjectAnalyzer analyzer in _analyzers)

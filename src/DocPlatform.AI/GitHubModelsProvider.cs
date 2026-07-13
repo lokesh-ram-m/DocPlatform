@@ -105,7 +105,10 @@ public class GitHubModelsProvider : IAIProvider
                 angular = p.Angular is null ? null : new
                 {
                     components = Cap(p.Angular.Components, 25),
-                    routes = Cap(p.Angular.Routes, 25)
+                    routes = Cap(p.Angular.Routes, 25),
+                    services = Cap(p.Angular.Services, 20),
+                    guards = p.Angular.Guards,
+                    apiCalls = Cap(p.Angular.ApiCalls, 30)
                 }
             })
         })

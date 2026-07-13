@@ -12,8 +12,8 @@ public class HeuristicMetadataExtractor : IMetadataExtractor
     {
         foreach (ProjectModel project in repository.Projects)
         {
-            if (project.Kind == ProjectKind.Angular) ExtractionHelpers.ExtractAngular(project);
-            else ExtractDotNet(project);
+            if (project.Kind == ProjectKind.Angular) continue;   // handled by AngularMetadataExtractor
+            ExtractDotNet(project);
         }
     }
 
