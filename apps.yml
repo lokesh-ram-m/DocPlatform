@@ -9,3 +9,7 @@ applications:
   - name: CleanArchitecture
     repos:
       - https://github.com/jasontaylordev/CleanArchitecture.git
+
+  - name: eShop
+    repos:
+      - https://github.com/dotnet/eshop.git

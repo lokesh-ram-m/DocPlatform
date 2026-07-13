@@ -37,7 +37,10 @@ public class GitHubModelsProvider : IAIProvider
         CancellationToken cancellationToken = default)
     {
         var result = new DocumentationResult { ApplicationName = application.Name };
-        string metadataJson = JsonSerializer.Serialize(application, JsonOptions);
+        // Compact projection so large apps (many projects) fit the model's token budget.
+        // Drops PackageReferences/ProjectReferences (covered by Capabilities/Relationships)
+        // and caps long lists.
+        string metadataJson = JsonSerializer.Serialize(ToCompact(application), JsonOptions);
 
         foreach (DocSpec spec in DocumentationPrompts.Plan(application.Name, metadataJson))
         {
@@ -69,4 +72,39 @@ public class GitHubModelsProvider : IAIProvider
         Response<ChatCompletions> response = await _client.CompleteAsync(options, ct);
         return response.Value.Content;
     }
+
+    // A trimmed view of the model for the prompt — keeps what the AI needs, drops the rest.
+    private static object ToCompact(ApplicationModel app) => new
+    {
+        name = app.Name,
+        technologies = app.Technologies,
+        capabilities = app.Capabilities.Select(c => new { c.Category, c.Name }),
+        relationships = app.Relationships.Select(r => new { r.From, r.To, r.Type }),
+        repositories = app.Repositories.Select(repo => new
+        {
+            name = repo.Name,
+            projects = repo.Projects.Select(p => new
+            {
+                name = p.Name,
+                kind = p.Kind.ToString(),
+                targetFramework = p.TargetFramework,
+                hasAuthentication = p.HasAuthentication,
+                controllers = p.Controllers.Select(c => new { c.Name, c.Route, actions = Cap(c.Actions, 20) }),
+                services = Cap(p.Services, 15),
+                interfaces = Cap(p.Interfaces, 15),
+                entities = Cap(p.Entities, 20),
+                dbContexts = p.DbContexts,
+                cqrsRequests = Cap(p.CqrsRequests, 20),
+                angular = p.Angular is null ? null : new
+                {
+                    components = Cap(p.Angular.Components, 25),
+                    routes = Cap(p.Angular.Routes, 25)
+                }
+            })
+        })
+    };
+
+    // Cap a list, appending a "+N more" marker so the AI knows it's truncated.
+    private static List<string> Cap(List<string> list, int max) =>
+        list.Count <= max ? list : list.Take(max).Append($"…(+{list.Count - max} more)").ToList();
 }
