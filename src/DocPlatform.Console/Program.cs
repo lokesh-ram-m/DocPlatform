@@ -12,12 +12,11 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 // ==========================================================================
-//  DocPlatform Console
-//   - interactive:  dotnet run                    (prompt for app + repos)
-//   - headless/CI:  dotnet run -- --config apps.yml
+//  DocPlatform Console — config-driven.
+//    Generate:   dotnet run -- --config apps.yml      (default config: apps.yml)
+//    Scan only:  SCAN_ONLY=1 dotnet run -- --config apps.yml   (detection report, no AI)
 // ==========================================================================
 
-// --- Configuration ---
 IConfiguration config = new ConfigurationBuilder()
     .SetBasePath(AppContext.BaseDirectory)
     .AddJsonFile("appsettings.json", optional: false)
@@ -28,16 +27,17 @@ IConfiguration config = new ConfigurationBuilder()
 string endpoint = config["Ai:Endpoint"]!;
 string model = config["Ai:Model"]!;
 string token = config["Ai:GitHubToken"] ?? Environment.GetEnvironmentVariable("GITHUB_TOKEN") ?? "";
+string engine = config["Extraction:Engine"] ?? "Roslyn";
+bool scanOnly = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SCAN_ONLY"));
 
-if (string.IsNullOrWhiteSpace(token))
+// The AI token is only required when actually generating (SCAN_ONLY needs no token).
+if (!scanOnly && string.IsNullOrWhiteSpace(token))
 {
-    Console.WriteLine("❌ No AI token. Add Ai:GitHubToken to appsettings.Development.json or set GITHUB_TOKEN.");
+    Console.WriteLine("❌ No AI token. Add Ai:GitHubToken to appsettings.Development.json or set GITHUB_TOKEN (or run with SCAN_ONLY=1).");
     return;
 }
 
 // --- Dependency Injection (composition root) ---
-string engine = config["Extraction:Engine"] ?? "Roslyn";
-
 var services = new ServiceCollection();
 services.AddSingleton<IRepositoryScanner, RepositoryScanner>();
 services.AddSingleton<IMetadataExtractor>(_ =>
@@ -49,7 +49,9 @@ services.AddSingleton<IMetadataExtractor>(_ =>
     return new CompositeMetadataExtractor(dotnet, new AngularMetadataExtractor());
 });
 services.AddSingleton<IMarkdownWriter, MarkdownWriter>();
-services.AddSingleton<IAIProvider>(_ => new GitHubModelsProvider(endpoint, model, token));
+services.AddSingleton<IAIProvider>(_ => scanOnly
+    ? new NoOpAIProvider()
+    : new GitHubModelsProvider(endpoint, model, token));
 services.AddSingleton<DocumentationOrchestrator>();
 ServiceProvider provider = services.BuildServiceProvider();
 
@@ -57,64 +59,19 @@ var orchestrator = provider.GetRequiredService<DocumentationOrchestrator>();
 
 string repoRoot = FindRepoRoot() ?? Directory.GetCurrentDirectory();
 string outputDir = Path.Combine(repoRoot, config["Output:DocsFolder"] ?? "docs-site/docs");
+string configPath = GetArg(args, "--config") ?? Path.Combine(repoRoot, "apps.yml");
 
-// --- Headless / CI mode (--config apps.yml) ---
-string? configPath = GetArg(args, "--config");
-if (configPath is not null)
-{
-    await RunHeadlessAsync(configPath, orchestrator, outputDir, repoRoot, engine);
-    return;
-}
-
-// --- Interactive mode ---
-Console.WriteLine("========================================");
-Console.WriteLine("  DocPlatform — AI Documentation (POC)");
-Console.WriteLine("========================================\n");
-
-Console.Write("Application name: ");
-string appName = ReadNonEmpty("TaskFlow");
-
-Console.WriteLine("\nAdd repository paths (one per line, blank line to finish):");
-var repoPaths = new List<string>();
-while (true)
-{
-    Console.Write("  repo> ");
-    string? line = Console.ReadLine();
-    if (string.IsNullOrWhiteSpace(line)) break;
-    string path = Expand(line.Trim());
-    if (Directory.Exists(path)) repoPaths.Add(path);
-    else Console.WriteLine($"    ⚠️ not found, skipped: {path}");
-}
-
-if (repoPaths.Count == 0)
-{
-    Console.WriteLine("No valid repositories. Exiting.");
-    return;
-}
-
-bool scanOnly = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SCAN_ONLY"));
-Console.WriteLine($"\n▶ Analyzing '{appName}' ({repoPaths.Count} repositories) — {engine} extractor{(scanOnly ? ", SCAN-ONLY" : "")}...\n");
-
-ApplicationModel app = scanOnly
-    ? orchestrator.BuildModel(appName, repoPaths, log: msg => Console.WriteLine("  " + msg))
-    : await orchestrator.GenerateAsync(appName, repoPaths, outputDir, log: msg => Console.WriteLine("  " + msg));
-
-PrintReport(app);
-if (!scanOnly)
-{
-    Console.WriteLine($"\n   Docs written : {outputDir}");
-    Console.WriteLine("   Next: run the Docusaurus site to browse the documentation.");
-}
+await RunAsync(configPath, orchestrator, outputDir, repoRoot, engine, scanOnly);
 
 // ==========================================================================
-//  Helpers
+//  Pipeline
 // ==========================================================================
-static async Task RunHeadlessAsync(string configPath, DocumentationOrchestrator orchestrator,
-    string outputDir, string repoRoot, string engine)
+static async Task RunAsync(string configPath, DocumentationOrchestrator orchestrator,
+    string outputDir, string repoRoot, string engine, bool scanOnly)
 {
     if (!File.Exists(configPath))
     {
-        Console.WriteLine($"❌ Config not found: {configPath}");
+        Console.WriteLine($"❌ Config not found: {configPath}. Pass --config <file> or add apps.yml at the repo root.");
         return;
     }
 
@@ -125,7 +82,7 @@ static async Task RunHeadlessAsync(string configPath, DocumentationOrchestrator 
     AppsConfig cfg = deserializer.Deserialize<AppsConfig>(File.ReadAllText(configPath)) ?? new AppsConfig();
 
     string workDir = Path.Combine(repoRoot, ".sources");
-    Console.WriteLine($"Headless mode — {cfg.Applications.Count} application(s), {engine} extractor\n");
+    Console.WriteLine($"{(scanOnly ? "SCAN-ONLY" : "Generate")} — {cfg.Applications.Count} application(s), {engine} extractor\n");
 
     foreach (AppEntry appEntry in cfg.Applications)
     {
@@ -134,11 +91,19 @@ static async Task RunHeadlessAsync(string configPath, DocumentationOrchestrator 
         foreach (string repo in appEntry.Repos)
             paths.Add(GitSourceResolver.Resolve(repo, workDir, msg => Console.WriteLine("  " + msg)));
 
-        await orchestrator.GenerateAsync(appEntry.Name, paths, outputDir, msg => Console.WriteLine("  " + msg));
-        Console.WriteLine($"  ✅ {appEntry.Name}\n");
+        if (scanOnly)
+        {
+            ApplicationModel app = orchestrator.BuildModel(appEntry.Name, paths, msg => Console.WriteLine("  " + msg));
+            PrintReport(app);
+        }
+        else
+        {
+            await orchestrator.GenerateAsync(appEntry.Name, paths, outputDir, msg => Console.WriteLine("  " + msg));
+            Console.WriteLine($"  ✅ {appEntry.Name}\n");
+        }
     }
 
-    Console.WriteLine($"All documentation written to {outputDir}");
+    if (!scanOnly) Console.WriteLine($"All documentation written to {outputDir}");
 }
 
 static void PrintReport(ApplicationModel app)
@@ -170,6 +135,7 @@ static void PrintReport(ApplicationModel app)
             }
         }
     }
+
     List<SkippedProject> skipped = app.Repositories.SelectMany(r => r.SkippedProjects).ToList();
     if (skipped.Count > 0)
     {
@@ -216,17 +182,6 @@ static string? GetArg(string[] args, string name)
     return i >= 0 && i + 1 < args.Length ? args[i + 1] : null;
 }
 
-static string ReadNonEmpty(string fallback)
-{
-    string? v = Console.ReadLine();
-    return string.IsNullOrWhiteSpace(v) ? fallback : v.Trim();
-}
-
-static string Expand(string path) =>
-    path.StartsWith("~")
-        ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), path[1..].TrimStart('/', '\\'))
-        : path;
-
 static string? FindRepoRoot()
 {
     var dir = new DirectoryInfo(AppContext.BaseDirectory);
@@ -249,4 +204,11 @@ class AppEntry
 {
     public string Name { get; set; } = string.Empty;
     public List<string> Repos { get; set; } = new();
+}
+
+// Used in SCAN_ONLY mode, where no AI is needed.
+class NoOpAIProvider : IAIProvider
+{
+    public Task<DocumentationResult> GenerateDocumentationAsync(ApplicationModel application, CancellationToken cancellationToken = default)
+        => throw new NotSupportedException("SCAN_ONLY mode does not generate documentation.");
 }

@@ -155,32 +155,40 @@ This is where the "understand the code" magic happens. Explain these carefully.
 - **Key gotcha we fixed:** csproj uses Windows `\` paths; on macOS `Path.GetFileNameWithoutExtension`
   didn't split them → we normalize `\`→`/`. (Great "we tested on real repos" story.)
 
-### The two extractors (why we have BOTH)
-Both implement `IMetadataExtractor`. You pick one in `appsettings.json`
-(`"Extraction": { "Engine": "Roslyn" }`).
+### Extraction = analyzer pipelines
+A `CompositeMetadataExtractor` (implements `IMetadataExtractor`) routes each project to the
+right pipeline: **.NET → the .NET extractor**, **Angular → the Angular extractor**. Each only
+touches the project kinds it supports.
 
-- **`Extraction/HeuristicMetadataExtractor.cs`** — **regex + file conventions.** Fast, no
-  compilation. Finds controllers (`class …Controller`), HTTP actions (`[HttpGet]` + method),
-  minimal-API endpoints (`.MapGet(...)`), DbContexts (base ends with `DbContext`), interfaces
-  (`I…`), services (`…Service`), CQRS (`…Command`/`…Query`), entities (classes under
-  Models/Entities/Domain, filtered).
-  - **Why:** perfect for a fast POC; simple; works on partial/non-compiling code.
-  - **Weakness:** regex guesses from text — misses odd formatting, can false-match.
+**.NET — `RoslynMetadataExtractor` (semantic, the default)**
+- Roslyn = the C# compiler as a library (`Microsoft.CodeAnalysis`). It parses each `.cs` file
+  into a **syntax tree**, and builds a per-project **`Compilation` + `SemanticModel`** so it can
+  *resolve symbols* — base-type chains across files, generic arguments, etc. (External framework
+  types may not resolve; the project's own symbols do — no build/restore needed.)
+- It runs a **pipeline of `IProjectAnalyzer`s**, each a small focused pass:
+  `ControllerAnalyzer` (routes), `DbContextAnalyzer`, `EntityAnalyzer` (DbSet + base classes),
+  `ServiceAnalyzer`, **`DIAnalyzer`** (registrations → interface/impl map), **`CallGraphAnalyzer`**
+  (constructor injection → controller→service→repo edges), `CqrsAnalyzer`, `AuthAnalyzer`.
+- **`HeuristicMetadataExtractor`** is the fast **regex** alternative (no compilation) — swap via
+  `appsettings.json` → `"Extraction": { "Engine": "Heuristic" }`.
+- **The line to say:** *"regex guesses from text; Roslyn understands the code. Both are
+  deterministic — Roslyn is just higher-fidelity. New capabilities are just new analyzers in the
+  pipeline — we never touch the others."*
 
-- **`Extraction/RoslynMetadataExtractor.cs`** — **real C# parsing** with
-  `Microsoft.CodeAnalysis` (Roslyn = the C# compiler as a library). Parses each file into a
-  **syntax tree** and reads it precisely: base types (so it knows a class inherits
-  `ControllerBase` / `IdentityDbContext`), attributes (`[HttpGet]`, `[Route]`, `[Authorize]`),
-  actual public methods, and `MapGet/MapPost` invocations for minimal APIs.
-  - **Why it's better:** it *understands* the language instead of pattern-matching text. This
-    is the default.
-  - **The line to say:** *"regex guesses from text; Roslyn understands the code. Both are
-    deterministic — Roslyn is just higher-fidelity. And because they share the
-    `IMetadataExtractor` interface, swapping them is one config line."*
+**Angular — `AngularMetadataExtractor` (heuristic)**
+- There's no Roslyn for TypeScript, so this is a **heuristic pipeline of `IAngularAnalyzer`s**
+  over the `.ts` files: `AngularComponentAnalyzer` (+ selector), `AngularServiceAnalyzer`
+  (`@Injectable`), `AngularRouteAnalyzer` (route → component / lazy), **`AngularHttpAnalyzer`**
+  (the **backend API endpoints the app calls**, base-URL resolved), `AngularGuardAnalyzer`
+  (guards + interceptors).
+- **Why this matters:** the Angular app's detected API calls line up with the backend controllers'
+  endpoints — the frontend and backend connect in the application view.
 
-- **`Extraction/ExtractionHelpers.cs`** — shared bits both use: the file walker, Angular
-  parsing (components + routes — routes detected by *content*: `RouterModule`/`provideRouter`/
-  `Routes`, not just filename), and the entity filter (drops `Dto`/`Response`/`Request`/`BaseEntity`).
+- **`Extraction/ExtractionHelpers.cs`** — shared bits: the file walker, the entity filter
+  (drops `Dto`/`Response`/`Request`/`BaseEntity`), and list de-duplication.
+- **`Application/CapabilityClassifier`, `GraphBuilder`, `DiagramGenerator`, `ArchitectureDetector`**
+  turn the raw facts into capabilities, the knowledge graph, the diagrams, and the detected
+  architecture patterns (Clean / Layered / CQRS / Repository / DI).
 
 ### `Output/MarkdownWriter.cs` — writing
 - Writes `docs/<app>/<group>/<file>.md` — **per application**, so multiple apps coexist and a
@@ -242,11 +250,13 @@ Both implement `IMetadataExtractor`. You pick one in `appsettings.json`
 ## 10. `DocPlatform.Console` (the entry point)
 
 - **`Program.cs`** — the **composition root**. It reads config, builds the DI container (wiring
-  the concrete scanner/extractor/AI/writer to the interfaces), and runs one of two modes:
-  - **Interactive:** prompts for app name + repo paths, then Analyze.
-  - **Headless (CI):** `dotnet run -- --config apps.yml` — no prompts, generates all apps
-    (cloning git URLs via `GitSourceResolver`). This is what CI runs.
-  - `SCAN_ONLY=1` → detection report without calling the AI (cheap testing).
+  the concrete scanner/extractors/AI/writer to the interfaces), and runs from **`apps.yml`**
+  (cloning git URLs via `GitSourceResolver`). Two ways to invoke it:
+  - **Generate:** `dotnet run -- --config apps.yml` — documents every app in the file. This is what CI runs.
+  - **Scan only:** `SCAN_ONLY=1 dotnet run -- --config apps.yml` — a detection report, **no AI**,
+    no token needed (cheap testing; uses a `NoOpAIProvider`).
+  - `--config` defaults to `apps.yml` at the repo root.
+- **`apps.yml`** — declares the applications and their repos (git URLs or local paths).
 - **`appsettings.json`** — non-secret config (AI endpoint/model, extractor engine, output folder).
 - **`appsettings.Development.json`** — the **token** (gitignored). `.example` template is committed.
 
